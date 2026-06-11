@@ -1,0 +1,2 @@
+# django-frontend
+touristic Management 
