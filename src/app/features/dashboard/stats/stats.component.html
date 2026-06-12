@@ -1,7 +1,7 @@
 <div class="page-header">
   <div>
-    <h1>📊 Statistiques globales</h1>
-    <p>Vue d'ensemble de la plateforme TourismPro</p>
+    <h1>📊 Global statistics</h1>
+    <p>Overview of the TourismPro platform</p>
   </div>
 </div>
 
@@ -20,7 +20,7 @@
   <!-- Booking funnel -->
   <div class="section-grid">
     <div class="card">
-      <div class="card-header"><h3>🎫 Entonnoir des réservations</h3></div>
+      <div class="card-header"><h3>🎫 Booking funnel</h3></div>
       <div class="card-body">
         <div class="funnel">
           <div class="funnel-row">
@@ -31,28 +31,28 @@
             <div class="funnel-val">{{bookingsTotal}}</div>
           </div>
           <div class="funnel-row">
-            <div class="funnel-label">En attente</div>
+            <div class="funnel-label">Pending</div>
             <div class="funnel-bar-wrap">
               <div class="funnel-bar" [style.width.%]="bookingsTotal ? (bookingsPending/bookingsTotal*100) : 0" style="background:#fcd34d"></div>
             </div>
             <div class="funnel-val">{{bookingsPending}}</div>
           </div>
           <div class="funnel-row">
-            <div class="funnel-label">Confirmées</div>
+            <div class="funnel-label">Confirmed</div>
             <div class="funnel-bar-wrap">
               <div class="funnel-bar" [style.width.%]="bookingsTotal ? (bookingsConfirmed/bookingsTotal*100) : 0" style="background:#60a5fa"></div>
             </div>
             <div class="funnel-val">{{bookingsConfirmed}}</div>
           </div>
           <div class="funnel-row">
-            <div class="funnel-label">Complétées</div>
+            <div class="funnel-label">Completed</div>
             <div class="funnel-bar-wrap">
               <div class="funnel-bar" [style.width.%]="bookingsTotal ? (bookingsCompleted/bookingsTotal*100) : 0" style="background:#34d399"></div>
             </div>
             <div class="funnel-val">{{bookingsCompleted}}</div>
           </div>
           <div class="funnel-row">
-            <div class="funnel-label">Annulées</div>
+            <div class="funnel-label">Cancelled</div>
             <div class="funnel-bar-wrap">
               <div class="funnel-bar" [style.width.%]="bookingsTotal ? (bookingsCancelled/bookingsTotal*100) : 0" style="background:#f87171"></div>
             </div>
@@ -63,11 +63,11 @@
         <div class="rate-chips">
           <div class="rate-chip success">
             <span class="rate-num">{{completionRate}}%</span>
-            <span class="rate-lbl">Taux complétion</span>
+            <span class="rate-lbl">Completion rate</span>
           </div>
           <div class="rate-chip error">
             <span class="rate-num">{{cancellationRate}}%</span>
-            <span class="rate-lbl">Taux annulation</span>
+            <span class="rate-lbl">Cancellation rate</span>
           </div>
         </div>
       </div>
@@ -76,42 +76,42 @@
     <!-- Reviews summary -->
     <div class="card">
       <div class="card-header">
-        <h3>⭐ Avis</h3>
-        <a routerLink="/reviews" class="btn btn-ghost btn-sm">Gérer →</a>
+        <h3>⭐ Reviews</h3>
+        <a routerLink="/reviews" class="btn btn-ghost btn-sm">Manage →</a>
       </div>
       <div class="card-body">
         <div class="review-summary">
           <div class="rs-stat">
             <span class="rs-val">{{reviewsTotal}}</span>
-            <span class="rs-lbl">Total avis</span>
+            <span class="rs-lbl">Total reviews</span>
           </div>
           <div class="rs-stat warn">
             <span class="rs-val">{{reviewsPending}}</span>
-            <span class="rs-lbl">En attente</span>
+            <span class="rs-lbl">Pending</span>
           </div>
           <div class="rs-stat success">
             <span class="rs-val">{{reviewsTotal - reviewsPending}}</span>
-            <span class="rs-lbl">Approuvés</span>
+            <span class="rs-lbl">Approved</span>
           </div>
         </div>
 
         <div *ngIf="pendingReviews.length > 0">
-          <h4 class="section-subtitle">Derniers avis en attente</h4>
+          <h4 class="section-subtitle">Latest pending reviews</h4>
           <div *ngFor="let r of pendingReviews" class="pending-review-row">
             <div class="pr-stars">
               <span *ngFor="let s of [1,2,3,4,5]" class="star" [class.filled]="s <= r.rating">★</span>
             </div>
             <div class="pr-info">
               <p class="pr-activity">{{r.activity_title}}</p>
-              <p class="pr-user">Par {{r.user_full_name || r.user_username}}</p>
+              <p class="pr-user">By {{r.user_full_name || r.user_username}}</p>
             </div>
-            <a routerLink="/reviews" class="btn btn-outline btn-sm">Modérer</a>
+            <a routerLink="/reviews" class="btn btn-outline btn-sm">Moderate</a>
           </div>
         </div>
 
         <div class="empty-state small" *ngIf="pendingReviews.length === 0">
           <span>✅</span>
-          <p>Aucun avis en attente</p>
+          <p>No pending reviews</p>
         </div>
       </div>
     </div>
@@ -120,20 +120,20 @@
   <!-- Recent bookings table -->
   <div class="card mt-24" *ngIf="recentBookings.length > 0">
     <div class="card-header">
-      <h3>🕐 Réservations récentes</h3>
-      <a routerLink="/bookings" class="btn btn-ghost btn-sm">Voir tout →</a>
+      <h3>🕐 Recent bookings</h3>
+      <a routerLink="/bookings" class="btn btn-ghost btn-sm">View all →</a>
     </div>
     <div class="table-wrapper">
       <table class="data-table">
         <thead>
           <tr>
-            <th>Référence</th>
-            <th>Activité</th>
-            <th>Client</th>
+            <th>Reference</th>
+            <th>Activity</th>
+            <th>Customer</th>
             <th>Date</th>
-            <th>Voyageurs</th>
-            <th>Montant</th>
-            <th>Statut</th>
+            <th>Travelers</th>
+            <th>Amount</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
