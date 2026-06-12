@@ -2,11 +2,9 @@
   <button class="menu-btn" (click)="toggle()" title="Toggle sidebar">
     <span></span><span></span><span></span>
   </button>
-
   <div class="navbar-center">
     <span class="navbar-title">🌍 TourismPro</span>
   </div>
-
   <div class="navbar-right">
     <div class="user-menu">
       <button class="user-trigger" (click)="toggleDropdown()" (blur)="closeDropdown()">
@@ -19,17 +17,16 @@
         </div>
         <span class="chevron">▾</span>
       </button>
-
       <div class="dropdown" [class.open]="dropdownOpen">
         <a routerLink="/profile" class="dropdown-item">
-          <span>👤</span> Mon profil
+          <span>👤</span> My profile
         </a>
         <a routerLink="/bookings" class="dropdown-item">
-          <span>🎫</span> Mes réservations
+          <span>🎫</span> My bookings
         </a>
         <div class="dropdown-divider"></div>
         <button class="dropdown-item danger" (click)="logout()">
-          <span>🚪</span> Déconnexion
+          <span>🚪</span> Log out
         </button>
       </div>
     </div>
