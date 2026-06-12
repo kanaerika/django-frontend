@@ -1,0 +1,20 @@
+.profile-layout { display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
+@media (max-width: 900px) { .profile-layout { grid-template-columns: 1fr; } }
+
+.text-center { text-align: center; }
+.profile-avatar {
+  width: 88px; height: 88px; border-radius: 50%;
+  background: var(--primary); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; font-weight: 700;
+  margin: 0 auto 16px;
+  box-shadow: 0 4px 16px rgba(26,107,90,.3);
+}
+.profile-name { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+.profile-role { font-size: 13px; color: var(--primary); font-weight: 600; background: var(--primary-50); display: inline-block; padding: 3px 12px; border-radius: var(--radius-full); margin-bottom: 8px; }
+.profile-email { font-size: 13px; color: var(--text-muted); }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+.form-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+.spinner-sm { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }

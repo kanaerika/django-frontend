@@ -1,0 +1,113 @@
+<div class="page-header">
+  <div>
+    <h1>👤 Mon Profil</h1>
+    <p>Gérez vos informations personnelles et votre sécurité</p>
+  </div>
+</div>
+
+<div class="profile-layout">
+  <!-- Left: Avatar card -->
+  <div class="profile-sidebar">
+    <div class="card">
+      <div class="card-body text-center">
+        <div class="profile-avatar">
+          {{(auth.currentUser()?.first_name || auth.currentUser()?.username || 'U')[0] | uppercase}}
+        </div>
+        <h3 class="profile-name">{{auth.currentUser()?.full_name || auth.currentUser()?.username}}</h3>
+        <p class="profile-role">{{auth.currentUser()?.role_name || 'Utilisateur'}}</p>
+        <p class="profile-email">{{auth.currentUser()?.email}}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Forms -->
+  <div class="profile-main">
+    <div class="tab-nav">
+      <button class="tab-btn" [class.active]="activeTab === 'info'" (click)="activeTab = 'info'">
+        📋 Informations
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'security'" (click)="activeTab = 'security'">
+        🔒 Sécurité
+      </button>
+    </div>
+
+    <!-- Info tab -->
+    <div class="card" *ngIf="activeTab === 'info'">
+      <div class="card-header">
+        <h3>Informations personnelles</h3>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="userForm" (ngSubmit)="saveInfo()">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Prénom</label>
+              <input class="form-control" formControlName="first_name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nom</label>
+              <input class="form-control" formControlName="last_name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input class="form-control" formControlName="email" type="email"
+              [class.is-invalid]="f(userForm,'email')?.invalid && f(userForm,'email')?.touched">
+            <p class="form-error" *ngIf="f(userForm,'email')?.invalid && f(userForm,'email')?.touched">Email invalide</p>
+          </div>
+          <hr class="divider">
+          <ng-container [formGroup]="profileForm">
+            <div class="form-group">
+              <label class="form-label">Téléphone</label>
+              <input class="form-control" formControlName="phone" placeholder="+237 600 000 000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Biographie</label>
+              <textarea class="form-control" formControlName="bio" rows="4" placeholder="Parlez de vous..."></textarea>
+            </div>
+          </ng-container>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-sm"></span>
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Security tab -->
+    <div class="card" *ngIf="activeTab === 'security'">
+      <div class="card-header">
+        <h3>Changer le mot de passe</h3>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="pwdForm" (ngSubmit)="changePassword()">
+          <div class="form-group">
+            <label class="form-label">Mot de passe actuel</label>
+            <input class="form-control" formControlName="old_password" type="password"
+              [class.is-invalid]="f(pwdForm,'old_password')?.invalid && f(pwdForm,'old_password')?.touched">
+            <p class="form-error" *ngIf="f(pwdForm,'old_password')?.invalid && f(pwdForm,'old_password')?.touched">Champ requis</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nouveau mot de passe</label>
+            <input class="form-control" formControlName="new_password" type="password"
+              [class.is-invalid]="f(pwdForm,'new_password')?.invalid && f(pwdForm,'new_password')?.touched">
+            <p class="form-error" *ngIf="f(pwdForm,'new_password')?.errors?.['minlength'] && f(pwdForm,'new_password')?.touched">Min. 8 caractères</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmer le nouveau mot de passe</label>
+            <input class="form-control" formControlName="new_password2" type="password"
+              [class.is-invalid]="pwdForm.errors?.['mismatch'] && f(pwdForm,'new_password2')?.touched">
+            <p class="form-error" *ngIf="pwdForm.errors?.['mismatch'] && f(pwdForm,'new_password2')?.touched">Les mots de passe ne correspondent pas</p>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="pwdLoading">
+              <span *ngIf="pwdLoading" class="spinner-sm"></span>
+              Modifier le mot de passe
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

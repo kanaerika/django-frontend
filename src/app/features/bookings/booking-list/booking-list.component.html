@@ -1,0 +1,79 @@
+<div class="page-header">
+  <div>
+    <h1>🎫 Réservations</h1>
+    <p>{{bookings.length}} réservation(s)</p>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="setTab('all')">Toutes</button>
+  <button class="tab-btn" [class.active]="activeTab === 'upcoming'" (click)="setTab('upcoming')">À venir</button>
+  <button class="tab-btn" [class.active]="activeTab === 'past'" (click)="setTab('past')">Passées</button>
+</div>
+
+<div class="filters-bar" *ngIf="activeTab === 'all'">
+  <select class="form-control" [(ngModel)]="statusFilter" (change)="loadBookings()">
+    <option value="">Tous les statuts</option>
+    <option value="pending">En attente</option>
+    <option value="confirmed">Confirmées</option>
+    <option value="completed">Complétées</option>
+    <option value="cancelled">Annulées</option>
+    <option value="refunded">Remboursées</option>
+  </select>
+</div>
+
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<div class="card" *ngIf="!loading && bookings.length > 0">
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Référence</th>
+          <th>Activité</th>
+          <th>Ville</th>
+          <th>Date</th>
+          <th>Voyageurs</th>
+          <th>Montant</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let b of bookings">
+          <td><code class="ref-code">{{b.booking_reference}}</code></td>
+          <td class="act-cell">
+            <a [routerLink]="['/bookings', b.id]" class="act-link">{{b.activity_title}}</a>
+          </td>
+          <td>{{b.city_name}}</td>
+          <td>{{b.schedule_date | date:'dd/MM/yyyy'}}<br><small>{{b.schedule_start_time}}</small></td>
+          <td class="text-center">{{b.number_of_travelers}}</td>
+          <td class="price-cell">{{b.total_price | currency:'XAF':'symbol':'1.0-0'}}</td>
+          <td><span class="badge" [ngClass]="getStatusClass(b.status)">{{b.status_display}}</span></td>
+          <td>
+            <div class="row-actions">
+              <a [routerLink]="['/bookings', b.id]" class="btn btn-ghost btn-sm btn-icon" title="Détails">👁️</a>
+              <button *ngIf="canCancel(b)" class="btn btn-ghost btn-sm" (click)="confirmCancel(b.id)" style="color:var(--error)">Annuler</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="empty-state" *ngIf="!loading && bookings.length === 0">
+  <div class="empty-icon">🎫</div>
+  <h3>Aucune réservation</h3>
+  <p>Vous n'avez pas encore de réservations dans cette catégorie.</p>
+  <a routerLink="/activities" class="btn btn-primary">Explorer les activités</a>
+</div>
+
+<app-confirm-modal *ngIf="showCancelModal"
+  title="Annuler la réservation"
+  message="Êtes-vous sûr de vouloir annuler cette réservation ?"
+  confirmLabel="Annuler la réservation"
+  [danger]="true"
+  [loading]="cancelLoading"
+  (confirmed)="doCancel()"
+  (cancelled)="showCancelModal = false" />

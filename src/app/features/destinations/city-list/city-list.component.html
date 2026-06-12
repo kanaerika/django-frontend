@@ -1,0 +1,116 @@
+<div class="page-header">
+  <div><h1>🏙️ Villes</h1><p>{{cities.length}} ville(s)</p></div>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Ajouter une ville</button>
+</div>
+<div class="filters-bar">
+  <input class="form-control search-input" [(ngModel)]="search" placeholder="🔍 Rechercher..." (keyup.enter)="load()">
+  <select class="form-control" [(ngModel)]="countryFilter" (change)="load()">
+    <option value="">Tous les pays</option>
+    <option *ngFor="let c of countries" [value]="c.id">{{c.name}}</option>
+  </select>
+  <button class="btn btn-ghost btn-sm" (click)="search=''; countryFilter=''; load()">✕</button>
+</div>
+
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<div class="card" *ngIf="!loading && cities.length > 0">
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead><tr><th>Ville</th><th>Pays</th><th>Activités</th><th>Coordonnées</th><th *ngIf="auth.isAdmin">Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let c of cities">
+          <td>
+            <div class="city-cell">
+              <img *ngIf="c.thumbnail_url" [src]="c.thumbnail_url" class="city-thumb">
+              <span *ngIf="!c.thumbnail_url" class="city-icon">🏙️</span>
+              <div>
+                <strong>{{c.name}}</strong>
+                <p class="city-desc" *ngIf="c.description">{{c.description.slice(0,60)}}...</p>
+              </div>
+            </div>
+          </td>
+          <td><span class="iso-badge">{{c.country_iso_code}}</span> {{c.country_name}}</td>
+          <td>{{c.activities_count}}</td>
+          <td class="coords" *ngIf="c.latitude">{{c.latitude | number:'1.2-2'}}, {{c.longitude | number:'1.2-2'}}</td>
+          <td class="coords" *ngIf="!c.latitude">—</td>
+          <td *ngIf="auth.isAdmin">
+            <div class="row-actions">
+              <button class="btn btn-outline btn-sm" (click)="openEdit(c)">✏️</button>
+              <button class="btn btn-ghost btn-sm" style="color:var(--error)" (click)="confirmDelete(c.id)">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="empty-state" *ngIf="!loading && cities.length === 0">
+  <div class="empty-icon">🏙️</div><h3>Aucune ville</h3>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Ajouter</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="showModal = false">
+  <div class="modal" style="max-width:580px" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{editingCity ? 'Modifier la ville' : 'Nouvelle ville'}}</h2>
+      <button class="btn btn-ghost btn-icon" (click)="showModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="form">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Nom *</label>
+            <input class="form-control" formControlName="name" placeholder="Yaoundé" [class.is-invalid]="f('name')?.invalid && f('name')?.touched">
+            <p class="form-error" *ngIf="f('name')?.invalid && f('name')?.touched">Requis</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pays *</label>
+            <select class="form-control" formControlName="country" [class.is-invalid]="f('country')?.invalid && f('country')?.touched">
+              <option [value]="null">Sélectionner</option>
+              <option *ngFor="let c of countries" [value]="c.id">{{c.name}}</option>
+            </select>
+            <p class="form-error" *ngIf="f('country')?.invalid && f('country')?.touched">Requis</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" formControlName="description" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Latitude</label>
+            <input class="form-control" type="number" step="any" formControlName="latitude" placeholder="3.8667">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Longitude</label>
+            <input class="form-control" type="number" step="any" formControlName="longitude" placeholder="11.5167">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Image</label>
+          <div class="upload-area">
+            <img *ngIf="previewUrl" [src]="previewUrl" class="upload-preview">
+            <label class="btn btn-outline btn-sm">
+              📷 Choisir une image
+              <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden>
+            </label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="showModal = false">Annuler</button>
+      <button class="btn btn-primary" (click)="save()" [disabled]="saving">
+        <span *ngIf="saving" class="spinner-sm"></span>
+        {{editingCity ? 'Enregistrer' : 'Créer'}}
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal *ngIf="showDeleteModal" title="Supprimer la ville"
+  message="Supprimer cette ville supprimera ses activités associées."
+  confirmLabel="Supprimer" [danger]="true" [loading]="deleteLoading"
+  (confirmed)="doDelete()" (cancelled)="showDeleteModal = false" />

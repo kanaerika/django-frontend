@@ -1,0 +1,11 @@
+.city-cell { display: flex; align-items: center; gap: 12px; }
+.city-thumb { width: 44px; height: 44px; border-radius: var(--radius); object-fit: cover; flex-shrink: 0; }
+.city-icon { font-size: 28px; }
+.city-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.iso-badge { font-family: monospace; font-weight: 700; background: var(--primary-50); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.coords { font-size: 12px; color: var(--text-muted); font-family: monospace; }
+.row-actions { display: flex; gap: 6px; }
+.upload-area { display: flex; align-items: center; gap: 14px; }
+.upload-preview { width: 80px; height: 60px; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); }
+.spinner-sm { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }

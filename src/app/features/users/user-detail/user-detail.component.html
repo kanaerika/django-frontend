@@ -1,0 +1,42 @@
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<ng-container *ngIf="user && !loading">
+  <div class="breadcrumbs">
+    <a routerLink="/users">Utilisateurs</a>
+    <span class="sep">/</span>
+    <span>{{user.full_name || user.username}}</span>
+  </div>
+
+  <div class="user-header">
+    <div class="user-big-avatar">{{initials(user)}}</div>
+    <div class="user-header-info">
+      <h1>{{user.full_name || user.username}}</h1>
+      <p class="user-handle">{{user.username}}</p>
+      <div class="user-meta">
+        <span class="badge" [ngClass]="user.role_name ? 'badge-primary' : 'badge-neutral'">{{user.role_name || 'Sans rôle'}}</span>
+        <span class="badge" [ngClass]="user.is_active ? 'badge-success' : 'badge-error'">{{user.is_active ? 'Actif' : 'Inactif'}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="user-detail-grid">
+    <div class="card">
+      <div class="card-header"><h3>📋 Informations</h3></div>
+      <div class="card-body">
+        <div class="info-item"><span class="info-label">Email</span><span class="info-value">{{user.email}}</span></div>
+        <div class="info-item"><span class="info-label">Prénom</span><span class="info-value">{{user.first_name || '—'}}</span></div>
+        <div class="info-item"><span class="info-label">Nom</span><span class="info-value">{{user.last_name || '—'}}</span></div>
+        <div class="info-item"><span class="info-label">Inscrit le</span><span class="info-value">{{user.date_joined | date:'dd/MM/yyyy'}}</span></div>
+        <div class="info-item"><span class="info-label">Dernière connexion</span><span class="info-value">{{user.last_login ? (user.last_login | date:'dd/MM/yyyy HH:mm') : '—'}}</span></div>
+      </div>
+    </div>
+
+    <div class="card" *ngIf="user.profile">
+      <div class="card-header"><h3>👤 Profil</h3></div>
+      <div class="card-body">
+        <div class="info-item"><span class="info-label">Téléphone</span><span class="info-value">{{user.profile.phone || '—'}}</span></div>
+        <div class="info-item"><span class="info-label">Bio</span><span class="info-value">{{user.profile.bio || '—'}}</span></div>
+      </div>
+    </div>
+  </div>
+</ng-container>

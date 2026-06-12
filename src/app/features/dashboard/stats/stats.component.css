@@ -1,0 +1,72 @@
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: transform .18s, box-shadow .18s;
+  cursor: pointer;
+}
+.kpi-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.kpi-icon { font-size: 28px; }
+.kpi-value { font-family: var(--font-display); font-size: 32px; font-weight: 800; color: var(--text-primary); line-height: 1; }
+.kpi-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+
+.section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+@media (max-width: 900px) { .section-grid { grid-template-columns: 1fr; } }
+
+/* Funnel */
+.funnel { display: flex; flex-direction: column; gap: 10px; }
+.funnel-row { display: flex; align-items: center; gap: 12px; }
+.funnel-label { width: 90px; font-size: 13px; color: var(--text-muted); font-weight: 500; text-align: right; flex-shrink: 0; }
+.funnel-bar-wrap { flex: 1; height: 22px; background: var(--surface-alt); border-radius: var(--radius-full); overflow: hidden; }
+.funnel-bar { height: 100%; border-radius: var(--radius-full); transition: width .5s ease; min-width: 4px; }
+.funnel-val { width: 36px; text-align: right; font-size: 14px; font-weight: 700; color: var(--text-primary); }
+
+.rate-chips { display: flex; gap: 12px; margin-top: 20px; }
+.rate-chip { flex: 1; padding: 14px; border-radius: var(--radius); text-align: center; }
+.rate-chip.success { background: var(--success-bg); }
+.rate-chip.error { background: var(--error-bg); }
+.rate-num { display: block; font-family: var(--font-display); font-size: 26px; font-weight: 800; }
+.rate-chip.success .rate-num { color: var(--success); }
+.rate-chip.error .rate-num { color: var(--error); }
+.rate-lbl { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+/* Reviews */
+.review-summary { display: flex; gap: 12px; margin-bottom: 20px; }
+.rs-stat { flex: 1; padding: 14px; background: var(--surface-alt); border-radius: var(--radius); text-align: center; }
+.rs-stat.warn { background: var(--warning-bg); }
+.rs-stat.success { background: var(--success-bg); }
+.rs-val { display: block; font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--text-primary); }
+.rs-stat.warn .rs-val { color: var(--warning); }
+.rs-stat.success .rs-val { color: var(--success); }
+.rs-lbl { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+
+.section-subtitle { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin: 16px 0 10px; }
+
+.pending-review-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.pending-review-row:last-child { border-bottom: none; }
+.pr-stars { font-size: 14px; white-space: nowrap; }
+.star { color: #e5e7eb; }
+.star.filled { color: #fbbf24; }
+.pr-info { flex: 1; }
+.pr-activity { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.pr-user { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+.mt-24 { margin-top: 24px; }
+.ref { font-family: monospace; background: var(--surface-alt); padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+.tc { text-align: center; }
+.price-col { font-weight: 700; color: var(--text-primary); }
+
+.empty-state.small { padding: 24px; }
+.empty-state.small span { font-size: 28px; }

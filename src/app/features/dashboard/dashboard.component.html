@@ -1,0 +1,132 @@
+<div class="page-header">
+  <div>
+    <h1>👋 Bonjour, {{auth.currentUser()?.first_name || auth.currentUser()?.username}} !</h1>
+    <p>Voici un aperçu de votre activité sur TourismPro</p>
+  </div>
+  <div class="header-actions">
+    <a routerLink="/activities" class="btn btn-outline">🏄 View activities</a>
+    <a routerLink="/bookings" class="btn btn-primary">🎫 my bookings</a>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid" *ngIf="stats">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#eaf4f1">🎫</div>
+    <div class="stat-value">{{stats.total_bookings}}</div>
+    <div class="stat-label">Total bookings</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#fffbeb">⏳</div>
+    <div class="stat-value">{{stats.pending_bookings}}</div>
+    <div class="stat-label">pending</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#ecfdf5">✅</div>
+    <div class="stat-value">{{stats.confirmed_bookings}}</div>
+    <div class="stat-label">Confirm</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#eff6ff">🏁</div>
+    <div class="stat-value">{{stats.completed_bookings}}</div>
+    <div class="stat-label">Complete</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#eaf4f1">💰</div>
+    <div class="stat-value">{{stats.total_spent | currency:'XAF':'symbol':'1.0-0'}}</div>
+    <div class="stat-label">total expenses</div>
+  </div>
+</div>
+
+<div class="dashboard-grid">
+  <!-- Upcoming Bookings -->
+  <div class="card">
+    <div class="card-header">
+      <h3>📅 Prochaines réservations</h3>
+      <a routerLink="/bookings" class="btn btn-ghost btn-sm">Voir tout →</a>
+    </div>
+    <div *ngIf="upcomingBookings.length > 0; else noUpcoming">
+      <div *ngFor="let b of upcomingBookings" class="booking-row">
+        <div class="booking-row-info">
+          <p class="booking-row-title">{{b.activity_title}}</p>
+          <p class="booking-row-meta">📍 {{b.city_name}} · 📅 {{b.schedule_date | date:'dd/MM/yyyy'}} · {{b.schedule_start_time}}</p>
+        </div>
+        <div class="booking-row-right">
+          <span class="badge" [ngClass]="getStatusClass(b.status)">{{b.status_display}}</span>
+          <span class="booking-price">{{b.total_price | currency:'XAF':'symbol':'1.0-0'}}</span>
+        </div>
+      </div>
+    </div>
+    <ng-template #noUpcoming>
+      <div class="empty-state small">
+        <span>📅</span>
+        <p>Aucune réservation à venir</p>
+        <a routerLink="/activities" class="btn btn-primary btn-sm">Explorer les activités</a>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Featured Activities -->
+  <div class="card">
+    <div class="card-header">
+      <h3>🌟 Activités à la une</h3>
+      <a routerLink="/activities" class="btn btn-ghost btn-sm">Voir tout →</a>
+    </div>
+    <div class="card-body" *ngIf="loading"><div class="loading-overlay"><div class="spinner"></div></div></div>
+    <div class="activity-mini-grid" *ngIf="!loading">
+      <a *ngFor="let a of featuredActivities" [routerLink]="['/activities', a.slug]" class="activity-mini-card">
+        <div class="activity-mini-img">
+          <img *ngIf="a.cover_image" [src]="a.cover_image" [alt]="a.title">
+          <span *ngIf="!a.cover_image">🏄</span>
+        </div>
+        <div class="activity-mini-info">
+          <p class="activity-mini-title">{{a.title}}</p>
+          <p class="activity-mini-meta">📍 {{a.city_name}} · ⏱ {{a.duration_hours}}h</p>
+          <p class="activity-mini-price">{{a.base_price | currency:'XAF':'symbol':'1.0-0'}}</p>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Admin: Pending reviews -->
+  <div class="card" *ngIf="auth.isAdmin && pendingReviews.length > 0">
+    <div class="card-header">
+      <h3>⭐ Avis en attente de modération</h3>
+      <a routerLink="/reviews" class="btn btn-ghost btn-sm">Gérer →</a>
+    </div>
+    <div *ngFor="let r of pendingReviews" class="review-row">
+      <div class="review-stars">
+        <span *ngFor="let s of [1,2,3,4,5]">{{s <= r.rating ? '★' : '☆'}}</span>
+      </div>
+      <div class="review-content">
+        <p class="review-title">{{r.title || r.comment.slice(0,50)}}</p>
+        <p class="review-meta">Par {{r.user_full_name}} · {{r.activity_title}}</p>
+      </div>
+      <span class="badge badge-warning">En attente</span>
+    </div>
+  </div>
+
+  <!-- Admin: Pending bookings -->
+  <div class="card" *ngIf="auth.isAdmin && recentBookings.length > 0">
+    <div class="card-header">
+      <h3>🎫 Réservations en attente</h3>
+      <a routerLink="/bookings" class="btn btn-ghost btn-sm">Gérer →</a>
+    </div>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr><th>Réf.</th><th>Activité</th><th>Utilisateur</th><th>Voyageurs</th><th>Montant</th></tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let b of recentBookings">
+            <td><code>{{b.booking_reference}}</code></td>
+            <td>{{b.activity_title}}</td>
+            <td>{{b.user_full_name}}</td>
+            <td>{{b.number_of_travelers}}</td>
+            <td>{{b.total_price | currency:'XAF':'symbol':'1.0-0'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="page-header">
+  <div><h1>👥 Utilisateurs</h1><p>{{filtered.length}} utilisateur(s)</p></div>
+</div>
+
+<div class="filters-bar">
+  <input class="form-control search-input" [(ngModel)]="search" (ngModelChange)="filterUsers()" placeholder="🔍 Rechercher par nom, email...">
+</div>
+
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<div class="card" *ngIf="!loading && filtered.length > 0">
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Utilisateur</th>
+          <th>Email</th>
+          <th>Rôle</th>
+          <th>Inscrit le</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of filtered">
+          <td>
+            <div class="user-cell">
+              <div class="user-avatar">{{initials(u)}}</div>
+              <div>
+                <p class="user-name">{{u.full_name || u.username}}</p>
+                <p class="user-sub">{{u.username}}</p>
+              </div>
+            </div>
+          </td>
+          <td>{{u.email}}</td>
+          <td>
+            <select class="form-control role-select" [value]="u.role || ''" (change)="assignRole(u.id, +$any($event.target).value)">
+              <option value="">Sans rôle</option>
+              <option *ngFor="let r of roles" [value]="r.id">{{r.name}}</option>
+            </select>
+          </td>
+          <td>{{u.date_joined | date:'dd/MM/yyyy'}}</td>
+          <td>
+            <span class="badge" [ngClass]="u.is_active ? 'badge-success' : 'badge-error'">
+              {{u.is_active ? 'Actif' : 'Inactif'}}
+            </span>
+          </td>
+          <td>
+            <a [routerLink]="['/users', u.id]" class="btn btn-ghost btn-sm">👁️ Voir</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="empty-state" *ngIf="!loading && filtered.length === 0">
+  <div class="empty-icon">👥</div>
+  <h3>Aucun utilisateur trouvé</h3>
+</div>

@@ -1,0 +1,103 @@
+<div class="breadcrumbs">
+  <a routerLink="/activities">Activités</a>
+  <span class="sep">/</span>
+  <span>{{isEdit ? 'Modifier' : 'Nouvelle activité'}}</span>
+</div>
+
+<div class="page-header">
+  <h1>{{isEdit ? '✏️ Modifier l\'activité' : '➕ Nouvelle activité'}}</h1>
+</div>
+
+<div class="loading-overlay" *ngIf="pageLoading"><div class="spinner"></div></div>
+
+<div class="form-layout" *ngIf="!pageLoading">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="card">
+      <div class="card-header"><h3>Informations générales</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Titre *</label>
+          <input class="form-control" formControlName="title" placeholder="Ex: Plongée sous-marine à Kribi"
+            [class.is-invalid]="f('title')?.invalid && f('title')?.touched">
+          <p class="form-error" *ngIf="f('title')?.errors?.['required'] && f('title')?.touched">Requis</p>
+          <p class="form-error" *ngIf="f('title')?.errors?.['minlength'] && f('title')?.touched">Min. 3 caractères</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Ville *</label>
+          <select class="form-control" formControlName="city" [class.is-invalid]="f('city')?.invalid && f('city')?.touched">
+            <option [value]="null">Sélectionner une ville</option>
+            <option *ngFor="let c of cities" [value]="c.id">{{c.name}} ({{c.country_name}})</option>
+          </select>
+          <p class="form-error" *ngIf="f('city')?.invalid && f('city')?.touched">Requis</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description *</label>
+          <textarea class="form-control" formControlName="description" rows="5" placeholder="Décrivez l'activité en détail..."
+            [class.is-invalid]="f('description')?.invalid && f('description')?.touched"></textarea>
+          <p class="form-error" *ngIf="f('description')?.invalid && f('description')?.touched">Requis</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Quoi apporter ?</label>
+          <textarea class="form-control" formControlName="what_to_bring" rows="3" placeholder="Maillot de bain, crème solaire..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-16">
+      <div class="card-header"><h3>Tarifs & Logistique</h3></div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Prix de base (XAF) *</label>
+            <input class="form-control" formControlName="base_price" type="number" placeholder="5000"
+              [class.is-invalid]="f('base_price')?.invalid && f('base_price')?.touched">
+            <p class="form-error" *ngIf="f('base_price')?.invalid && f('base_price')?.touched">Prix valide requis</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Voyageurs max *</label>
+            <input class="form-control" formControlName="max_travelers" type="number" min="1"
+              [class.is-invalid]="f('max_travelers')?.invalid && f('max_travelers')?.touched">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Durée (heures) *</label>
+            <input class="form-control" formControlName="duration_hours" type="number" step="0.5" min="0.5"
+              [class.is-invalid]="f('duration_hours')?.invalid && f('duration_hours')?.touched">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Statut</label>
+            <div class="toggle-row">
+              <input type="checkbox" formControlName="is_active" id="is_active" class="toggle-input">
+              <label for="is_active" class="toggle-label">Activité active</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-16">
+      <div class="card-header"><h3>Catégories</h3></div>
+      <div class="card-body">
+        <div class="categories-grid">
+          <button *ngFor="let c of categories" type="button"
+            class="cat-chip" [class.selected]="isCatSelected(c.id)"
+            (click)="toggleCategory(c.id)">
+            {{c.name}}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-footer">
+      <a routerLink="/activities" class="btn btn-outline">Annuler</a>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-sm"></span>
+        {{isEdit ? 'Enregistrer' : 'Créer l\'activité'}}
+      </button>
+    </div>
+  </form>
+</div>

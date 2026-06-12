@@ -1,0 +1,208 @@
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<ng-container *ngIf="activity && !loading">
+  <div class="breadcrumbs">
+    <a routerLink="/activities">Activities</a>
+    <span class="sep">/</span>
+    <span>{{activity.title}}</span>
+  </div>
+
+  <!-- Hero -->
+  <div class="activity-hero">
+    <div class="hero-gallery">
+      <div class="hero-main-img">
+        <img *ngIf="activity.images.length > 0" [src]="activity.images[0].image_url || activity.images[0].image" [alt]="activity.title">
+        <div *ngIf="activity.images.length === 0" class="img-placeholder">🏄</div>
+      </div>
+      <div class="hero-thumb-row" *ngIf="activity.images.length > 1">
+        <img *ngFor="let img of activity.images.slice(1,4)" [src]="img.image_url || img.image" class="thumb-img">
+      </div>
+    </div>
+
+    <div class="hero-info">
+      <div class="hero-badges">
+        <span class="badge" [ngClass]="getStatusBadge(activity.is_active)">
+          {{activity.is_active ? 'Active' : 'Inactive'}}
+        </span>
+        <span *ngFor="let c of activity.categories" class="badge badge-primary">{{c.name}}</span>
+      </div>
+      <h1 class="hero-title">{{activity.title}}</h1>
+      <div class="hero-meta">
+        <span>📍 {{activity.city?.name || activity.city}}</span>
+        <span>⏱ {{activity.duration_hours}}h</span>
+        <span>👥 Max. {{activity.max_travelers}} pers.</span>
+      </div>
+      <div class="hero-rating">
+        <app-star-rating [rating]="activity.average_rating" />
+        <span class="rating-num">{{activity.average_rating | number:'1.1-1'}}</span>
+        <span class="rating-count">({{activity.reviews_count}} avis)</span>
+      </div>
+      <div class="hero-price">
+        <span class="price-main">{{activity.lowest_price || activity.base_price | currency:'XAF':'symbol':'1.0-0'}}</span>
+        <span class="price-label">/ personne</span>
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-primary btn-lg" (click)="activeTab = 'schedules'">🎫 Réserver</button>
+        <ng-container *ngIf="auth.isAdmin || auth.isGuide">
+          <a [routerLink]="['/activities', activity.slug, 'edit']" class="btn btn-outline">✏️ Modifier</a>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-nav">
+    <button class="tab-btn" [class.active]="activeTab === 'info'" (click)="activeTab = 'info'">📋 <Details></Details></button>
+    <button class="tab-btn" [class.active]="activeTab === 'schedules'" (click)="activeTab = 'schedules'">📅 Plannings</button>
+    <button class="tab-btn" [class.active]="activeTab === 'reviews'" (click)="activeTab = 'reviews'">⭐ reviews ({{activity.reviews_count}})</button>
+    <button class="tab-btn" [class.active]="activeTab === 'info' && false" *ngIf="auth.isAdmin || auth.isGuide" (click)="activeTab = 'info'">🖼️ Photos</button>
+  </div>
+
+  <!-- Info tab -->
+  <div *ngIf="activeTab === 'info'">
+    <div class="detail-grid">
+      <div class="card">
+        <div class="card-header"><h3>📋 Description</h3></div>
+        <div class="card-body description-text">{{activity.description}}</div>
+      </div>
+      <div class="card" *ngIf="activity.what_to_bring">
+        <div class="card-header"><h3>🎒 what to bring</h3></div>
+        <div class="card-body description-text">{{activity.what_to_bring}}</div>
+      </div>
+    </div>
+
+    <!-- Image management (admin/guide) -->
+    <div class="card mt-20" *ngIf="auth.isAdmin || auth.isGuide">
+      <div class="card-header">
+        <h3>🖼️ Galerie photos</h3>
+        <label class="btn btn-outline btn-sm" [class.disabled]="imageLoading">
+          <span *ngIf="!imageLoading">+ add a picture</span>
+          <span *ngIf="imageLoading">loading...</span>
+          <input type="file" accept="image/*" (change)="uploadImage($event)" hidden>
+        </label>
+      </div>
+      <div class="card-body">
+        <div class="image-grid" *ngIf="activity.images.length > 0; else noImages">
+          <div *ngFor="let img of activity.images" class="image-item">
+            <img [src]="img.image_url || img.image" [alt]="'Image'">
+            <div class="image-overlay">
+              <button class="btn btn-sm btn-outline" (click)="setCover(img.id)" *ngIf="!img.is_cover">Couverture</button>
+              <span class="badge badge-primary" *ngIf="img.is_cover">Couverture</span>
+              <button class="btn btn-sm btn-danger" (click)="deleteImage(img.id)">🗑️</button>
+            </div>
+          </div>
+        </div>
+        <ng-template #noImages>
+          <p class="text-muted">Any picture added.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <!-- Schedules tab -->
+  <div *ngIf="activeTab === 'schedules'">
+    <div class="detail-grid">
+      <div class="card">
+        <div class="card-header">
+          <h3>📅 Créneaux disponibles</h3>
+          <a routerLink="/schedules/new" class="btn btn-outline btn-sm" *ngIf="auth.isAdmin || auth.isGuide">+ Ajouter</a>
+        </div>
+        <div *ngIf="activity.schedules.length > 0; else noSchedules">
+          <div *ngFor="let s of activity.schedules" class="schedule-row" [class.selected]="selectedSchedule?.id === s.id"
+            [class.full]="s.is_full" (click)="!s.is_full && selectSchedule(s)">
+            <div class="schedule-date">
+              <span class="sched-day">{{s.date | date:'dd'}}</span>
+              <span class="sched-month">{{s.date | date:'MMM'}}</span>
+            </div>
+            <div class="schedule-info">
+              <p class="sched-time">🕐 {{s.start_time}}</p>
+              <p class="sched-spots">👥 {{s.available_spots}} place(s) disponible(s)</p>
+            </div>
+            <div class="schedule-right">
+              <span class="sched-price">{{s.actual_price | currency:'XAF':'symbol':'1.0-0'}}</span>
+              <span class="badge badge-error" *ngIf="s.is_full">Complete</span>
+              <span class="badge badge-success" *ngIf="!s.is_full">Disponible</span>
+            </div>
+          </div>
+        </div>
+        <ng-template #noSchedules>
+          <div class="empty-state small"><span>📅</span><p>Aucun créneau disponible</p></div>
+        </ng-template>
+      </div>
+
+      <!-- Booking panel -->
+      <div class="card booking-panel" *ngIf="showBookingPanel && selectedSchedule">
+        <div class="card-header"><h3>🎫 Confirm  reservation</h3></div>
+        <div class="card-body">
+          <div class="booking-summary">
+            <div class="bs-row"><span>Activity</span><strong>{{activity.title}}</strong></div>
+            <div class="bs-row"><span>Date</span><strong>{{selectedSchedule.date | date:'dd/MM/yyyy'}}</strong></div>
+            <div class="bs-row"><span>Hour</span><strong>{{selectedSchedule.start_time}}</strong></div>
+            <div class="bs-row"><span>avalilable places.</span><strong>{{selectedSchedule.available_spots}}</strong></div>
+          </div>
+          <div class="form-group mt-16">
+            <label class="form-label">Number of travellers</label>
+            <input class="form-control" type="number" [(ngModel)]="travelers"
+              [min]="1" [max]="selectedSchedule.available_spots">
+          </div>
+          <div class="booking-total">
+            <span>Total estimé</span>
+            <strong>{{(+selectedSchedule.actual_price * travelers) | currency:'XAF':'symbol':'1.0-0'}}</strong>
+          </div>
+          <button class="btn btn-primary w-full mt-16" (click)="book()" [disabled]="bookingLoading">
+            <span *ngIf="bookingLoading" class="spinner-sm"></span>
+            book now
+          </button>
+          <button class="btn btn-ghost w-full mt-8" (click)="showBookingPanel = false">Annuler</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews tab -->
+  <div *ngIf="activeTab === 'reviews'">
+    <!-- Write review -->
+    <div class="card mb-20" *ngIf="auth.isLoggedIn">
+      <div class="card-header"><h3>✍️ Laisser un avis</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Note</label>
+          <div class="star-picker">
+            <button *ngFor="let s of [1,2,3,4,5]" type="button" class="star-btn"
+              [class.active]="s <= newReview.rating" (click)="newReview.rating = s">★</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Titre (optionnel)</label>
+          <input class="form-control" [(ngModel)]="newReview.title" placeholder="Résumez votre expérience">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Commentaire *</label>
+          <textarea class="form-control" [(ngModel)]="newReview.comment" rows="4" placeholder="Décrivez votre expérience..."></textarea>
+        </div>
+        <button class="btn btn-primary" (click)="submitReview()" [disabled]="reviewLoading">
+          <span *ngIf="reviewLoading" class="spinner-sm"></span>
+          Publier l'avis
+        </button>
+      </div>
+    </div>
+
+    <!-- Reviews list -->
+    <div class="reviews-list">
+      <div *ngIf="reviews.length === 0" class="empty-state"><div class="empty-icon">⭐</div><h3>Aucun avis</h3></div>
+      <div *ngFor="let r of reviews" class="review-card">
+        <div class="review-header">
+          <div class="reviewer-avatar">{{(r.user_full_name || r.user_username)[0] | uppercase}}</div>
+          <div class="reviewer-info">
+            <p class="reviewer-name">{{r.user_full_name || r.user_username}}</p>
+            <p class="review-date">{{r.created_at | date:'dd MMM yyyy'}}</p>
+          </div>
+          <app-star-rating [rating]="r.rating" />
+        </div>
+        <p class="review-title-text" *ngIf="r.title">{{r.title}}</p>
+        <p class="review-comment">{{r.comment}}</p>
+        <span class="badge badge-warning" *ngIf="!r.is_visible">En attente</span>
+      </div>
+    </div>
+  </div>
+</ng-container>

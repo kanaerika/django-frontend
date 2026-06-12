@@ -1,0 +1,5 @@
+.app-shell { display: flex; min-height: 100vh; }
+
+.app-shell.sidebar-collapsed .main-content {
+  margin-left: 68px;
+}

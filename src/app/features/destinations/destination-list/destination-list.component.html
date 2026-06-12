@@ -1,0 +1,65 @@
+<div class="page-header">
+  <div>
+    <h1>🌍 Destinations</h1>
+    <p>Explorez toutes les destinations</p>
+  </div>
+  <div class="header-actions">
+    <a routerLink="/destinations/countries" class="btn btn-outline">🏳️ Pays</a>
+    <a routerLink="/destinations/cities" class="btn btn-outline">🏙️ Villes</a>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn" [class.active]="activeTab === 'cities'" (click)="setTab('cities')">🏙️ Villes</button>
+  <button class="tab-btn" [class.active]="activeTab === 'tourism'" (click)="setTab('tourism')">📍 Destinations touristiques</button>
+</div>
+
+<div class="filters-bar">
+  <input class="form-control search-input" [(ngModel)]="search" placeholder="🔍 Rechercher..." (keyup.enter)="load()">
+  <button class="btn btn-outline btn-sm" (click)="load()">Rechercher</button>
+</div>
+
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<!-- Cities grid -->
+<div class="dest-grid" *ngIf="!loading && activeTab === 'cities' && cities.length > 0">
+  <div class="dest-card" *ngFor="let c of cities">
+    <div class="dest-card-img">
+      <img *ngIf="c.thumbnail_url" [src]="c.thumbnail_url" [alt]="c.name">
+      <span *ngIf="!c.thumbnail_url">🏙️</span>
+    </div>
+    <div class="dest-card-body">
+      <h3>{{c.name}}</h3>
+      <p class="dest-country">🏳️ {{c.country_name}}</p>
+      <p class="dest-desc" *ngIf="c.description">{{c.description.slice(0, 100)}}{{c.description.length > 100 ? '...' : ''}}</p>
+      <div class="dest-stats">
+        <span>🏄 {{c.activities_count}} activités</span>
+        <span *ngIf="c.latitude">📍 {{c.latitude | number:'1.2-2'}}, {{c.longitude | number:'1.2-2'}}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tourism destinations grid -->
+<div class="dest-grid" *ngIf="!loading && activeTab === 'tourism' && tourismDests.length > 0">
+  <div class="dest-card" *ngFor="let d of tourismDests">
+    <div class="dest-card-img">
+      <img *ngIf="d.image_url" [src]="d.image_url" [alt]="d.name">
+      <span *ngIf="!d.image_url">📍</span>
+    </div>
+    <div class="dest-card-body">
+      <h3>{{d.name}}</h3>
+      <p class="dest-country">🏙️ {{d.city}}</p>
+      <p class="dest-desc" *ngIf="d.description">{{d.description.slice(0, 100)}}{{d.description.length > 100 ? '...' : ''}}</p>
+      <div class="dest-stats">
+        <span>🏨 {{d.hotels_count}} hôtels</span>
+        <span>⭐ {{d.average_rating | number:'1.1-1'}} ({{d.reviews_count}} avis)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="empty-state" *ngIf="!loading && ((activeTab === 'cities' && cities.length === 0) || (activeTab === 'tourism' && tourismDests.length === 0))">
+  <div class="empty-icon">🌍</div>
+  <h3>Aucune destination trouvée</h3>
+</div>

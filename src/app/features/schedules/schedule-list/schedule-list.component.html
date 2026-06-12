@@ -1,0 +1,79 @@
+<div class="page-header">
+  <div>
+    <h1>📅 Plannings</h1>
+    <p>{{schedules.length}} créneau(x)</p>
+  </div>
+  <a routerLink="/schedules/new" class="btn btn-primary" *ngIf="auth.isAdmin || auth.isGuide">+ Nouveau créneau</a>
+</div>
+
+<div class="filters-bar">
+  <select class="form-control" [(ngModel)]="filterAvailable" (change)="load()">
+    <option value="">Tous les créneaux</option>
+    <option value="true">Disponibles</option>
+    <option value="false">Complets</option>
+  </select>
+</div>
+
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<div class="card" *ngIf="!loading && schedules.length > 0">
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Activité</th>
+          <th>Date</th>
+          <th>Heure</th>
+          <th>Places dispo.</th>
+          <th>Prix</th>
+          <th>Statut</th>
+          <th *ngIf="auth.isAdmin || auth.isGuide">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of schedules">
+          <td>
+            <a [routerLink]="['/activities', s.activity_title]" class="act-link">{{s.activity_title}}</a>
+          </td>
+          <td>{{s.date | date:'dd/MM/yyyy'}}</td>
+          <td>{{s.start_time}}</td>
+          <td>
+            <span class="spots-badge" [class.low]="s.available_spots <= 3 && !s.is_full">
+              {{s.available_spots}} / {{s.available_spots_original}}
+            </span>
+          </td>
+          <td class="price-cell">
+            {{s.actual_price | currency:'XAF':'symbol':'1.0-0'}}
+            <span class="badge badge-info override-badge" *ngIf="s.price_override">spécial</span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="s.is_full ? 'badge-error' : 'badge-success'">
+              {{s.is_full ? 'Complet' : 'Disponible'}}
+            </span>
+          </td>
+          <td *ngIf="auth.isAdmin || auth.isGuide">
+            <div class="row-actions">
+              <button class="btn btn-ghost btn-sm btn-icon" style="color:var(--error)" (click)="confirmDelete(s.id)" title="Supprimer">🗑️</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="empty-state" *ngIf="!loading && schedules.length === 0">
+  <div class="empty-icon">📅</div>
+  <h3>Aucun créneau</h3>
+  <p>Créez votre premier créneau pour une activité.</p>
+  <a routerLink="/schedules/new" class="btn btn-primary" *ngIf="auth.isAdmin || auth.isGuide">+ Créer un créneau</a>
+</div>
+
+<app-confirm-modal *ngIf="showDeleteModal"
+  title="Supprimer le créneau"
+  message="Voulez-vous vraiment supprimer ce créneau ? Les réservations associées seront affectées."
+  confirmLabel="Supprimer"
+  [danger]="true"
+  [loading]="deleteLoading"
+  (confirmed)="doDelete()"
+  (cancelled)="showDeleteModal = false" />

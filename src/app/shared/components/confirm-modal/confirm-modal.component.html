@@ -1,0 +1,19 @@
+<div class="modal-backdrop" (click)="cancelled.emit()">
+  <div class="modal confirm-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{title}}</h2>
+      <button class="btn btn-ghost btn-icon" (click)="cancelled.emit()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-msg">{{message}}</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="cancelled.emit()" [disabled]="loading">Annuler</button>
+      <button class="btn" [class.btn-danger]="danger" [class.btn-primary]="!danger"
+        (click)="confirmed.emit()" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-sm"></span>
+        {{confirmLabel}}
+      </button>
+    </div>
+  </div>
+</div>

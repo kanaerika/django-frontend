@@ -1,0 +1,97 @@
+<div class="page-header">
+  <div>
+    <h1>🏄 Activités</h1>
+    <p>{{activities.length}} activité(s) trouvée(s)</p>
+  </div>
+  <a routerLink="/activities/new" class="btn btn-primary" *ngIf="auth.isAdmin || auth.isGuide">
+    + Nouvelle activité
+  </a>
+</div>
+
+<!-- Filters -->
+<div class="filters-bar">
+  <input class="form-control search-input" [(ngModel)]="filters.search" placeholder="🔍 Rechercher..."
+    (keyup.enter)="loadActivities()">
+
+  <select class="form-control" [(ngModel)]="filters.category" (change)="loadActivities()">
+    <option value="">Toutes catégories</option>
+    <option *ngFor="let c of categories" [value]="c.slug">{{c.name}}</option>
+  </select>
+
+  <select class="form-control" [(ngModel)]="filters.city" (change)="loadActivities()">
+    <option value="">Toutes les villes</option>
+    <option *ngFor="let c of cities" [value]="c.slug">{{c.name}}</option>
+  </select>
+
+  <input class="form-control" [(ngModel)]="filters.min_price" placeholder="Prix min" type="number" style="max-width:110px">
+  <input class="form-control" [(ngModel)]="filters.max_price" placeholder="Prix max" type="number" style="max-width:110px">
+
+  <select class="form-control" [(ngModel)]="filters.ordering" (change)="loadActivities()">
+    <option value="">Trier par...</option>
+    <option value="base_price">Prix ↑</option>
+    <option value="-base_price">Prix ↓</option>
+    <option value="-cached_rating">Mieux notés</option>
+    <option value="-created_at">Plus récents</option>
+    <option value="duration_hours">Durée ↑</option>
+  </select>
+
+  <button class="btn btn-outline btn-sm" (click)="loadActivities()">🔍 Filtrer</button>
+  <button class="btn btn-ghost btn-sm" (click)="resetFilters()">✕ Réinitialiser</button>
+</div>
+
+<!-- Loading -->
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<!-- Grid -->
+<div class="activity-grid" *ngIf="!loading && activities.length > 0">
+  <div class="activity-card" *ngFor="let a of activities">
+    <div class="activity-card-img">
+      <img *ngIf="a.cover_image" [src]="a.cover_image" [alt]="a.title">
+      <span *ngIf="!a.cover_image">🏄</span>
+    </div>
+    <div class="activity-card-body">
+      <div class="activity-card-title">{{a.title}}</div>
+      <div class="activity-card-meta">
+        <span>📍 {{a.city_name}}, {{a.country_name}}</span>
+        <span>⏱ {{a.duration_hours}}h</span>
+      </div>
+      <div class="card-categories">
+        <span *ngFor="let c of a.categories" class="badge badge-primary">{{c.name}}</span>
+      </div>
+      <div class="activity-card-footer">
+        <div>
+          <div class="activity-price">{{a.base_price | currency:'XAF':'symbol':'1.0-0'}}<span>/pers.</span></div>
+          <div class="rating-row">
+            <app-star-rating [rating]="a.average_rating" />
+            <span class="rating-val">{{a.average_rating | number:'1.1-1'}}</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a [routerLink]="['/activities', a.slug]" class="btn btn-primary btn-sm">Voir</a>
+          <ng-container *ngIf="canEdit(a)">
+            <a [routerLink]="['/activities', a.slug, 'edit']" class="btn btn-outline btn-sm">✏️</a>
+            <button class="btn btn-ghost btn-sm" (click)="confirmDelete(a.slug)">🗑️</button>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Empty -->
+<div class="empty-state" *ngIf="!loading && activities.length === 0">
+  <div class="empty-icon">🏖️</div>
+  <h3>Aucune activité trouvée</h3>
+  <p>Essayez de modifier vos filtres ou créez une nouvelle activité.</p>
+  <a routerLink="/activities/new" class="btn btn-primary" *ngIf="auth.isAdmin || auth.isGuide">+ Créer une activité</a>
+</div>
+
+<!-- Confirm delete modal -->
+<app-confirm-modal *ngIf="showDeleteModal"
+  title="Supprimer l'activité"
+  message="Êtes-vous sûr de vouloir supprimer cette activité ? Cette action est irréversible."
+  confirmLabel="Supprimer"
+  [danger]="true"
+  [loading]="deleteLoading"
+  (confirmed)="doDelete()"
+  (cancelled)="showDeleteModal = false" />

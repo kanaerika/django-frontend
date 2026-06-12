@@ -1,0 +1,100 @@
+<div class="page-header">
+  <div><h1>🛏️ Réservations hôtels</h1><p>{{bookings.length}} réservation(s)</p></div>
+  <button class="btn btn-primary" (click)="openCreate()">+ Réserver un hôtel</button>
+</div>
+
+<div class="tab-nav" *ngIf="auth.isAdmin">
+  <button class="tab-btn" [class.active]="activeTab === 'mine'" (click)="setTab('mine')">Mes réservations</button>
+  <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="setTab('all')">Toutes</button>
+</div>
+
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<div class="card" *ngIf="!loading && bookings.length > 0">
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Hôtel</th>
+          <th>Destination</th>
+          <th>Check-in</th>
+          <th>Check-out</th>
+          <th>Nuits</th>
+          <th>Hôtes</th>
+          <th *ngIf="auth.isAdmin">Client</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let b of bookings">
+          <td><strong>{{b.hotel_name}}</strong></td>
+          <td>{{b.destination_name}}</td>
+          <td>{{b.check_in | date:'dd/MM/yyyy'}}</td>
+          <td>{{b.check_out | date:'dd/MM/yyyy'}}</td>
+          <td class="text-center">{{b.nights}}</td>
+          <td class="text-center">{{b.guests}}</td>
+          <td *ngIf="auth.isAdmin">{{b.user_username}}</td>
+          <td><span class="badge" [ngClass]="getStatusClass(b.status)">{{b.status_display}}</span></td>
+          <td>
+            <button *ngIf="b.status !== 'cancelled'" class="btn btn-ghost btn-sm" style="color:var(--error)" (click)="confirmCancel(b.id)">Annuler</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="empty-state" *ngIf="!loading && bookings.length === 0">
+  <div class="empty-icon">🛏️</div>
+  <h3>Aucune réservation hôtel</h3>
+  <button class="btn btn-primary" (click)="openCreate()">Réserver maintenant</button>
+</div>
+
+<!-- Booking modal -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="showModal = false">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header"><h2>🛏️ Réserver un hôtel</h2><button class="btn btn-ghost btn-icon" (click)="showModal = false">✕</button></div>
+    <div class="modal-body">
+      <form [formGroup]="form">
+        <div class="form-group">
+          <label class="form-label">Hôtel *</label>
+          <select class="form-control" formControlName="hotel" [class.is-invalid]="f('hotel')?.invalid && f('hotel')?.touched">
+            <option [value]="null">Sélectionner un hôtel</option>
+            <option *ngFor="let h of hotels" [value]="h.id">{{h.name}} – {{h.destination_name}}</option>
+          </select>
+          <p class="form-error" *ngIf="f('hotel')?.invalid && f('hotel')?.touched">Requis</p>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Check-in *</label>
+            <input class="form-control" type="date" formControlName="check_in" [class.is-invalid]="f('check_in')?.invalid && f('check_in')?.touched">
+            <p class="form-error" *ngIf="f('check_in')?.invalid && f('check_in')?.touched">Requis</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Check-out *</label>
+            <input class="form-control" type="date" formControlName="check_out" [class.is-invalid]="f('check_out')?.invalid && f('check_out')?.touched">
+            <p class="form-error" *ngIf="f('check_out')?.invalid && f('check_out')?.touched">Requis</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nombre d'hôtes *</label>
+          <input class="form-control" type="number" formControlName="guests" min="1" [class.is-invalid]="f('guests')?.invalid && f('guests')?.touched">
+          <p class="form-error" *ngIf="f('guests')?.invalid && f('guests')?.touched">Min. 1</p>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="showModal = false">Annuler</button>
+      <button class="btn btn-primary" (click)="save()" [disabled]="saving">
+        <span *ngIf="saving" class="spinner-sm"></span>
+        Confirmer la réservation
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal *ngIf="showCancelModal" title="Annuler la réservation hôtel"
+  message="Voulez-vous annuler cette réservation hôtel ?"
+  confirmLabel="Annuler" [danger]="true" [loading]="cancelLoading"
+  (confirmed)="doCancel()" (cancelled)="showCancelModal = false" />

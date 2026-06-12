@@ -1,0 +1,37 @@
+<header class="navbar">
+  <button class="menu-btn" (click)="toggle()" title="Toggle sidebar">
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="navbar-center">
+    <span class="navbar-title">🌍 TourismPro</span>
+  </div>
+
+  <div class="navbar-right">
+    <div class="user-menu">
+      <button class="user-trigger" (click)="toggleDropdown()" (blur)="closeDropdown()">
+        <div class="nav-avatar">
+          {{(auth.currentUser()?.first_name || auth.currentUser()?.username || 'U')[0] | uppercase}}
+        </div>
+        <div class="nav-user-info">
+          <span class="nav-user-name">{{auth.currentUser()?.full_name || auth.currentUser()?.username}}</span>
+          <span class="nav-user-role">{{auth.currentUser()?.role_name || ''}}</span>
+        </div>
+        <span class="chevron">▾</span>
+      </button>
+
+      <div class="dropdown" [class.open]="dropdownOpen">
+        <a routerLink="/profile" class="dropdown-item">
+          <span>👤</span> Mon profil
+        </a>
+        <a routerLink="/bookings" class="dropdown-item">
+          <span>🎫</span> Mes réservations
+        </a>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item danger" (click)="logout()">
+          <span>🚪</span> Déconnexion
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

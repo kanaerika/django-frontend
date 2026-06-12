@@ -1,0 +1,4 @@
+.iso-badge { font-family: monospace; font-weight: 700; background: var(--primary-50); color: var(--primary); padding: 3px 8px; border-radius: 4px; font-size: 13px; }
+.row-actions { display: flex; gap: 6px; }
+.spinner-sm { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }

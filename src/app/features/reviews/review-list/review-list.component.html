@@ -1,0 +1,67 @@
+<div class="page-header">
+  <div>
+    <h1>⭐ Avis</h1>
+    <p>{{reviews.length}} avis</p>
+  </div>
+</div>
+
+<div class="tab-nav">
+  <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="setTab('all')">Tous les avis</button>
+  <button class="tab-btn" [class.active]="activeTab === 'mine'" (click)="setTab('mine')">Mes avis</button>
+  <button class="tab-btn" [class.active]="activeTab === 'pending'" (click)="setTab('pending')" *ngIf="auth.isAdmin">
+    ⏳ En attente de modération
+  </button>
+</div>
+
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<div class="reviews-grid" *ngIf="!loading && reviews.length > 0">
+  <div class="review-card" *ngFor="let r of reviews" [class.hidden-review]="!r.is_visible">
+    <div class="review-card-header">
+      <div class="reviewer-info">
+        <div class="reviewer-avatar">{{(r.user_full_name || r.user_username)[0] | uppercase}}</div>
+        <div>
+          <p class="reviewer-name">{{r.user_full_name || r.user_username}}</p>
+          <p class="review-date">{{r.created_at | date:'dd MMM yyyy'}}</p>
+        </div>
+      </div>
+      <div class="review-card-right">
+        <app-star-rating [rating]="r.rating" />
+        <span class="badge badge-success" *ngIf="r.is_visible">Visible</span>
+        <span class="badge badge-warning" *ngIf="!r.is_visible">En attente</span>
+      </div>
+    </div>
+
+    <div class="review-activity">
+      <a [routerLink]="['/activities', r.activity_slug]">🏄 {{r.activity_title}}</a>
+    </div>
+
+    <p class="review-title" *ngIf="r.title">{{r.title}}</p>
+    <p class="review-comment">{{r.comment}}</p>
+
+    <!-- Actions -->
+    <div class="review-actions" *ngIf="auth.isAdmin">
+      <button class="btn btn-success btn-sm" *ngIf="!r.is_visible" (click)="moderate(r.id, true)">✅ Approuver</button>
+      <button class="btn btn-outline btn-sm" *ngIf="r.is_visible" (click)="moderate(r.id, false)">👁️ Masquer</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--error)" (click)="confirmDelete(r.id)">🗑️ Supprimer</button>
+    </div>
+    <div class="review-actions" *ngIf="!auth.isAdmin">
+      <button class="btn btn-ghost btn-sm" style="color:var(--error)" (click)="confirmDelete(r.id)">🗑️ Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<div class="empty-state" *ngIf="!loading && reviews.length === 0">
+  <div class="empty-icon">⭐</div>
+  <h3>Aucun avis</h3>
+  <p>{{activeTab === 'pending' ? 'Aucun avis en attente de modération.' : 'Aucun avis trouvé.'}}</p>
+</div>
+
+<app-confirm-modal *ngIf="showDeleteModal"
+  title="Supprimer l'avis"
+  message="Êtes-vous sûr de vouloir supprimer cet avis ?"
+  confirmLabel="Supprimer"
+  [danger]="true"
+  [loading]="deleteLoading"
+  (confirmed)="doDelete()"
+  (cancelled)="showDeleteModal = false" />

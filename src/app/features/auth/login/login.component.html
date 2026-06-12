@@ -1,0 +1,54 @@
+<div class="auth-page">
+  <div class="auth-left">
+    <div class="auth-hero">
+      <div class="hero-graphic">🌍</div>
+      <h1>TourismPro</h1>
+      <p>Gérez vos activités touristiques, réservations et destinations depuis une seule plateforme moderne.</p>
+      <div class="hero-features">
+        <div class="hero-feature"><span>🏄</span> Activités & Plannings</div>
+        <div class="hero-feature"><span>🎫</span> Réservations en temps réel</div>
+        <div class="hero-feature"><span>🏨</span> Gestion hôtelière</div>
+        <div class="hero-feature"><span>⭐</span> Avis & modération</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="auth-logo">🌍</div>
+      <h2>Connexion</h2>
+      <p class="auth-subtitle">Bienvenue ! Entrez vos identifiants pour continuer.</p>
+
+      <div class="alert alert-error" *ngIf="error">
+        <span>⚠️</span> {{error}}
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group">
+          <label class="form-label">Nom d'utilisateur</label>
+          <input class="form-control" formControlName="username" placeholder="ex: john_doe"
+            [class.is-invalid]="f('username')?.invalid && f('username')?.touched" autocomplete="username">
+          <p class="form-error" *ngIf="f('username')?.invalid && f('username')?.touched">Champ requis</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mot de passe</label>
+          <div class="input-group">
+            <input class="form-control" formControlName="password" [type]="showPwd ? 'text' : 'password'"
+              placeholder="Votre mot de passe" [class.is-invalid]="f('password')?.invalid && f('password')?.touched"
+              autocomplete="current-password">
+            <button type="button" class="input-addon" (click)="showPwd = !showPwd">{{showPwd ? '🙈' : '👁️'}}</button>
+          </div>
+          <p class="form-error" *ngIf="f('password')?.invalid && f('password')?.touched">Champ requis</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full btn-lg" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-sm"></span>
+          {{ loading ? 'Connexion...' : 'Se connecter' }}
+        </button>
+      </form>
+
+      <p class="auth-link">Pas encore de compte ? <a routerLink="/auth/register">S'inscrire</a></p>
+    </div>
+  </div>
+</div>

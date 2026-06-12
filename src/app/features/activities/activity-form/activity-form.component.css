@@ -1,0 +1,20 @@
+.form-layout { max-width: 820px; }
+.mt-16 { margin-top: 16px; }
+.form-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; padding-top: 16px; }
+
+.categories-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.cat-chip {
+  padding: 6px 14px; border-radius: var(--radius-full);
+  border: 1.5px solid var(--border); background: var(--surface-alt);
+  font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  cursor: pointer; transition: all .15s;
+}
+.cat-chip:hover { border-color: var(--primary); color: var(--primary); }
+.cat-chip.selected { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+.toggle-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.toggle-input { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+.toggle-label { font-size: 14px; color: var(--text-secondary); cursor: pointer; }
+
+.spinner-sm { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }

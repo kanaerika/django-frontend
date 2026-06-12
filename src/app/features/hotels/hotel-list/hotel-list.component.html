@@ -1,0 +1,93 @@
+<div class="page-header">
+  <div><h1>🏨 Hôtels</h1><p>{{hotels.length}} hôtel(s)</p></div>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Ajouter un hôtel</button>
+</div>
+
+<div class="filters-bar">
+  <input class="form-control search-input" [(ngModel)]="search" placeholder="🔍 Rechercher..." (keyup.enter)="load()">
+  <select class="form-control" [(ngModel)]="destFilter" (change)="load()">
+    <option value="">Toutes les destinations</option>
+    <option *ngFor="let d of destinations" [value]="d.id">{{d.name}}</option>
+  </select>
+  <button class="btn btn-ghost btn-sm" (click)="search=''; destFilter=''; load()">✕</button>
+</div>
+
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<div class="hotels-grid" *ngIf="!loading && hotels.length > 0">
+  <div class="hotel-card" *ngFor="let h of hotels">
+    <div class="hotel-img">
+      <img *ngIf="h.image_url" [src]="h.image_url" [alt]="h.name">
+      <span *ngIf="!h.image_url">🏨</span>
+    </div>
+    <div class="hotel-body">
+      <h3>{{h.name}}</h3>
+      <p class="hotel-dest">📍 {{h.destination_name}}</p>
+      <p class="hotel-address">🏠 {{h.address}}</p>
+      <p class="hotel-bookings">🎫 {{h.bookings_count}} réservation(s)</p>
+    </div>
+    <div class="hotel-footer" *ngIf="auth.isAdmin">
+      <button class="btn btn-outline btn-sm" (click)="openEdit(h)">✏️ Modifier</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--error)" (click)="confirmDelete(h.id)">🗑️</button>
+    </div>
+  </div>
+</div>
+
+<div class="empty-state" *ngIf="!loading && hotels.length === 0">
+  <div class="empty-icon">🏨</div><h3>Aucun hôtel</h3>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Ajouter</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="showModal = false">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{editingHotel ? 'Modifier l\'hôtel' : 'Nouvel hôtel'}}</h2>
+      <button class="btn btn-ghost btn-icon" (click)="showModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="form">
+        <div class="form-group">
+          <label class="form-label">Nom *</label>
+          <input class="form-control" formControlName="name" placeholder="Hôtel Hilton" [class.is-invalid]="f('name')?.invalid && f('name')?.touched">
+          <p class="form-error" *ngIf="f('name')?.invalid && f('name')?.touched">Requis</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Destination *</label>
+          <select class="form-control" formControlName="destination" [class.is-invalid]="f('destination')?.invalid && f('destination')?.touched">
+            <option [value]="null">Sélectionner</option>
+            <option *ngFor="let d of destinations" [value]="d.id">{{d.name}} ({{d.city}})</option>
+          </select>
+          <p class="form-error" *ngIf="f('destination')?.invalid && f('destination')?.touched">Requis</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Adresse *</label>
+          <input class="form-control" formControlName="address" placeholder="123 Avenue..." [class.is-invalid]="f('address')?.invalid && f('address')?.touched">
+          <p class="form-error" *ngIf="f('address')?.invalid && f('address')?.touched">Requis</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Image</label>
+          <div class="upload-area">
+            <img *ngIf="previewUrl" [src]="previewUrl" class="upload-preview">
+            <label class="btn btn-outline btn-sm">
+              📷 Choisir une image
+              <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden>
+            </label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="showModal = false">Annuler</button>
+      <button class="btn btn-primary" (click)="save()" [disabled]="saving">
+        <span *ngIf="saving" class="spinner-sm"></span>
+        {{editingHotel ? 'Enregistrer' : 'Créer'}}
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal *ngIf="showDeleteModal" title="Supprimer l'hôtel"
+  message="Voulez-vous vraiment supprimer cet hôtel ?"
+  confirmLabel="Supprimer" [danger]="true" [loading]="deleteLoading"
+  (confirmed)="doDelete()" (cancelled)="showDeleteModal = false" />

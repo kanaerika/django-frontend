@@ -1,0 +1,55 @@
+<div class="breadcrumbs">
+  <a routerLink="/schedules">Plannings</a>
+  <span class="sep">/</span>
+  <span>Nouveau créneau</span>
+</div>
+<div class="page-header"><h1>📅 Nouveau créneau</h1></div>
+
+<div class="form-layout">
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="card">
+      <div class="card-header"><h3>Informations du créneau</h3></div>
+      <div class="card-body">
+        <div class="form-group">
+          <label class="form-label">Activité *</label>
+          <select class="form-control" formControlName="activity" [class.is-invalid]="f('activity')?.invalid && f('activity')?.touched">
+            <option [value]="null">Sélectionner une activité</option>
+            <option *ngFor="let a of activities" [value]="a.id">{{a.title}} ({{a.city_name}})</option>
+          </select>
+          <p class="form-error" *ngIf="f('activity')?.invalid && f('activity')?.touched">Requis</p>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date *</label>
+            <input class="form-control" type="date" formControlName="date" [class.is-invalid]="f('date')?.invalid && f('date')?.touched">
+            <p class="form-error" *ngIf="f('date')?.invalid && f('date')?.touched">Requis</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Heure de début *</label>
+            <input class="form-control" type="time" formControlName="start_time" [class.is-invalid]="f('start_time')?.invalid && f('start_time')?.touched">
+            <p class="form-error" *ngIf="f('start_time')?.invalid && f('start_time')?.touched">Requis</p>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Places disponibles *</label>
+            <input class="form-control" type="number" formControlName="available_spots" min="1" [class.is-invalid]="f('available_spots')?.invalid && f('available_spots')?.touched">
+            <p class="form-error" *ngIf="f('available_spots')?.invalid && f('available_spots')?.touched">Min. 1</p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Prix spécial (XAF) <span class="optional">optionnel</span></label>
+            <input class="form-control" type="number" formControlName="price_override" placeholder="Laissez vide pour le prix de base">
+            <p class="form-hint">Si renseigné, remplace le prix de base de l'activité.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <a routerLink="/schedules" class="btn btn-outline">Annuler</a>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-sm"></span>
+        Créer le créneau
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,7 @@
+.ref-code { font-family: monospace; background: var(--surface-alt); padding: 3px 7px; border-radius: 4px; font-size: 12px; }
+.act-link { font-weight: 600; color: var(--primary); text-decoration: none; }
+.act-link:hover { text-decoration: underline; }
+.price-cell { font-weight: 700; color: var(--text-primary); }
+.text-center { text-align: center; }
+.row-actions { display: flex; gap: 6px; align-items: center; }
+small { font-size: 11px; color: var(--text-muted); }

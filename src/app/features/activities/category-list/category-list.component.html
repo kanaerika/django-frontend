@@ -1,0 +1,68 @@
+<div class="page-header">
+  <div>
+    <h1>🏷️ Catégories d'activités</h1>
+    <p>{{categories.length}} catégorie(s)</p>
+  </div>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Nouvelle catégorie</button>
+</div>
+
+<div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
+
+<div class="categories-grid" *ngIf="!loading && categories.length > 0">
+  <div class="category-card" *ngFor="let c of categories">
+    <div class="cat-icon">🏷️</div>
+    <div class="cat-body">
+      <h3>{{c.name}}</h3>
+      <p class="cat-slug">/{{c.slug}}</p>
+      <div class="cat-stat">
+        <span>🏄 {{c.activities_count}} activité(s)</span>
+      </div>
+    </div>
+    <div class="cat-actions" *ngIf="auth.isAdmin">
+      <a [routerLink]="['/activities']" [queryParams]="{category: c.slug}" class="btn btn-ghost btn-sm">Voir activités</a>
+      <button class="btn btn-outline btn-sm" (click)="openEdit(c)">✏️</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--error)" (click)="confirmDelete(c.slug)">🗑️</button>
+    </div>
+  </div>
+</div>
+
+<div class="empty-state" *ngIf="!loading && categories.length === 0">
+  <div class="empty-icon">🏷️</div>
+  <h3>Aucune catégorie</h3>
+  <p>Créez des catégories pour organiser vos activités.</p>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Créer une catégorie</button>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" *ngIf="showModal" (click)="showModal = false">
+  <div class="modal" style="max-width:420px" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{editingCategory ? 'Modifier la catégorie' : 'Nouvelle catégorie'}}</h2>
+      <button class="btn btn-ghost btn-icon" (click)="showModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="form">
+        <div class="form-group">
+          <label class="form-label">Nom *</label>
+          <input class="form-control" formControlName="name" placeholder="Ex: Plongée, Randonnée, Safari..."
+            [class.is-invalid]="f('name')?.invalid && f('name')?.touched" autofocus>
+          <p class="form-error" *ngIf="f('name')?.errors?.['required'] && f('name')?.touched">Requis</p>
+          <p class="form-error" *ngIf="f('name')?.errors?.['minlength'] && f('name')?.touched">Min. 2 caractères</p>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="showModal = false">Annuler</button>
+      <button class="btn btn-primary" (click)="save()" [disabled]="saving">
+        <span *ngIf="saving" class="spinner-sm"></span>
+        {{editingCategory ? 'Enregistrer' : 'Créer'}}
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-confirm-modal *ngIf="showDeleteModal"
+  title="Supprimer la catégorie"
+  message="Supprimer cette catégorie la dissociera de toutes les activités liées."
+  confirmLabel="Supprimer" [danger]="true" [loading]="deleteLoading"
+  (confirmed)="doDelete()" (cancelled)="showDeleteModal = false" />
