@@ -1,11 +1,11 @@
 <div class="page-header">
-  <div><h1>🏙️ Villes</h1><p>{{cities.length}} ville(s)</p></div>
-  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Ajouter une ville</button>
+  <div><h1>🏙️ Cities</h1><p>{{cities.length}} city(ies)</p></div>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Add a city</button>
 </div>
 <div class="filters-bar">
-  <input class="form-control search-input" [(ngModel)]="search" placeholder="🔍 Rechercher..." (keyup.enter)="load()">
+  <input class="form-control search-input" [(ngModel)]="search" placeholder="🔍 Search..." (keyup.enter)="load()">
   <select class="form-control" [(ngModel)]="countryFilter" (change)="load()">
-    <option value="">Tous les pays</option>
+    <option value="">All countries</option>
     <option *ngFor="let c of countries" [value]="c.id">{{c.name}}</option>
   </select>
   <button class="btn btn-ghost btn-sm" (click)="search=''; countryFilter=''; load()">✕</button>
@@ -16,7 +16,7 @@
 <div class="card" *ngIf="!loading && cities.length > 0">
   <div class="table-wrapper">
     <table class="data-table">
-      <thead><tr><th>Ville</th><th>Pays</th><th>Activités</th><th>Coordonnées</th><th *ngIf="auth.isAdmin">Actions</th></tr></thead>
+      <thead><tr><th>City</th><th>Country</th><th>Activities</th><th>Coordinates</th><th *ngIf="auth.isAdmin">Actions</th></tr></thead>
       <tbody>
         <tr *ngFor="let c of cities">
           <td>
@@ -46,32 +46,32 @@
 </div>
 
 <div class="empty-state" *ngIf="!loading && cities.length === 0">
-  <div class="empty-icon">🏙️</div><h3>Aucune ville</h3>
-  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Ajouter</button>
+  <div class="empty-icon">🏙️</div><h3>No cities</h3>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Add</button>
 </div>
 
 <!-- Modal -->
 <div class="modal-backdrop" *ngIf="showModal" (click)="showModal = false">
   <div class="modal" style="max-width:580px" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>{{editingCity ? 'Modifier la ville' : 'Nouvelle ville'}}</h2>
+      <h2>{{editingCity ? 'Edit city' : 'New city'}}</h2>
       <button class="btn btn-ghost btn-icon" (click)="showModal = false">✕</button>
     </div>
     <div class="modal-body">
       <form [formGroup]="form">
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Nom *</label>
+            <label class="form-label">Name *</label>
             <input class="form-control" formControlName="name" placeholder="Yaoundé" [class.is-invalid]="f('name')?.invalid && f('name')?.touched">
-            <p class="form-error" *ngIf="f('name')?.invalid && f('name')?.touched">Requis</p>
+            <p class="form-error" *ngIf="f('name')?.invalid && f('name')?.touched">Required</p>
           </div>
           <div class="form-group">
-            <label class="form-label">Pays *</label>
+            <label class="form-label">Country *</label>
             <select class="form-control" formControlName="country" [class.is-invalid]="f('country')?.invalid && f('country')?.touched">
-              <option [value]="null">Sélectionner</option>
+              <option [value]="null">Select</option>
               <option *ngFor="let c of countries" [value]="c.id">{{c.name}}</option>
             </select>
-            <p class="form-error" *ngIf="f('country')?.invalid && f('country')?.touched">Requis</p>
+            <p class="form-error" *ngIf="f('country')?.invalid && f('country')?.touched">Required</p>
           </div>
         </div>
         <div class="form-group">
@@ -93,7 +93,7 @@
           <div class="upload-area">
             <img *ngIf="previewUrl" [src]="previewUrl" class="upload-preview">
             <label class="btn btn-outline btn-sm">
-              📷 Choisir une image
+              📷 Choose an image
               <input type="file" accept="image/*" (change)="onFileSelect($event)" hidden>
             </label>
           </div>
@@ -101,16 +101,16 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" (click)="showModal = false">Annuler</button>
+      <button class="btn btn-outline" (click)="showModal = false">Cancel</button>
       <button class="btn btn-primary" (click)="save()" [disabled]="saving">
         <span *ngIf="saving" class="spinner-sm"></span>
-        {{editingCity ? 'Enregistrer' : 'Créer'}}
+        {{editingCity ? 'Save' : 'Create'}}
       </button>
     </div>
   </div>
 </div>
 
-<app-confirm-modal *ngIf="showDeleteModal" title="Supprimer la ville"
-  message="Supprimer cette ville supprimera ses activités associées."
-  confirmLabel="Supprimer" [danger]="true" [loading]="deleteLoading"
+<app-confirm-modal *ngIf="showDeleteModal" title="Delete city"
+  message="Deleting this city will also delete its associated activities."
+  confirmLabel="Delete" [danger]="true" [loading]="deleteLoading"
   (confirmed)="doDelete()" (cancelled)="showDeleteModal = false" />
