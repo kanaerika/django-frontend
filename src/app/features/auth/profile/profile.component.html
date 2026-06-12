@@ -1,7 +1,7 @@
 <div class="page-header">
   <div>
-    <h1>👤 Mon Profil</h1>
-    <p>Gérez vos informations personnelles et votre sécurité</p>
+    <h1>👤 My Profile</h1>
+    <p>Manage your personal information and security</p>
   </div>
 </div>
 
@@ -14,7 +14,7 @@
           {{(auth.currentUser()?.first_name || auth.currentUser()?.username || 'U')[0] | uppercase}}
         </div>
         <h3 class="profile-name">{{auth.currentUser()?.full_name || auth.currentUser()?.username}}</h3>
-        <p class="profile-role">{{auth.currentUser()?.role_name || 'Utilisateur'}}</p>
+        <p class="profile-role">{{auth.currentUser()?.role_name || 'User'}}</p>
         <p class="profile-email">{{auth.currentUser()?.email}}</p>
       </div>
     </div>
@@ -24,27 +24,27 @@
   <div class="profile-main">
     <div class="tab-nav">
       <button class="tab-btn" [class.active]="activeTab === 'info'" (click)="activeTab = 'info'">
-        📋 Informations
+        📋 Information
       </button>
       <button class="tab-btn" [class.active]="activeTab === 'security'" (click)="activeTab = 'security'">
-        🔒 Sécurité
+        🔒 Security
       </button>
     </div>
 
     <!-- Info tab -->
     <div class="card" *ngIf="activeTab === 'info'">
       <div class="card-header">
-        <h3>Informations personnelles</h3>
+        <h3>Personal information</h3>
       </div>
       <div class="card-body">
         <form [formGroup]="userForm" (ngSubmit)="saveInfo()">
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label">Prénom</label>
+              <label class="form-label">First name</label>
               <input class="form-control" formControlName="first_name">
             </div>
             <div class="form-group">
-              <label class="form-label">Nom</label>
+              <label class="form-label">Last name</label>
               <input class="form-control" formControlName="last_name">
             </div>
           </div>
@@ -52,23 +52,23 @@
             <label class="form-label">Email *</label>
             <input class="form-control" formControlName="email" type="email"
               [class.is-invalid]="f(userForm,'email')?.invalid && f(userForm,'email')?.touched">
-            <p class="form-error" *ngIf="f(userForm,'email')?.invalid && f(userForm,'email')?.touched">Email invalide</p>
+            <p class="form-error" *ngIf="f(userForm,'email')?.invalid && f(userForm,'email')?.touched">Invalid email</p>
           </div>
           <hr class="divider">
           <ng-container [formGroup]="profileForm">
             <div class="form-group">
-              <label class="form-label">Téléphone</label>
+              <label class="form-label">Phone</label>
               <input class="form-control" formControlName="phone" placeholder="+237 600 000 000">
             </div>
             <div class="form-group">
-              <label class="form-label">Biographie</label>
-              <textarea class="form-control" formControlName="bio" rows="4" placeholder="Parlez de vous..."></textarea>
+              <label class="form-label">Bio</label>
+              <textarea class="form-control" formControlName="bio" rows="4" placeholder="Tell us about yourself..."></textarea>
             </div>
           </ng-container>
           <div class="form-actions">
             <button type="submit" class="btn btn-primary" [disabled]="loading">
               <span *ngIf="loading" class="spinner-sm"></span>
-              Enregistrer
+              Save
             </button>
           </div>
         </form>
@@ -78,32 +78,32 @@
     <!-- Security tab -->
     <div class="card" *ngIf="activeTab === 'security'">
       <div class="card-header">
-        <h3>Changer le mot de passe</h3>
+        <h3>Change password</h3>
       </div>
       <div class="card-body">
         <form [formGroup]="pwdForm" (ngSubmit)="changePassword()">
           <div class="form-group">
-            <label class="form-label">Mot de passe actuel</label>
+            <label class="form-label">Current password</label>
             <input class="form-control" formControlName="old_password" type="password"
               [class.is-invalid]="f(pwdForm,'old_password')?.invalid && f(pwdForm,'old_password')?.touched">
-            <p class="form-error" *ngIf="f(pwdForm,'old_password')?.invalid && f(pwdForm,'old_password')?.touched">Champ requis</p>
+            <p class="form-error" *ngIf="f(pwdForm,'old_password')?.invalid && f(pwdForm,'old_password')?.touched">Required field</p>
           </div>
           <div class="form-group">
-            <label class="form-label">Nouveau mot de passe</label>
+            <label class="form-label">New password</label>
             <input class="form-control" formControlName="new_password" type="password"
               [class.is-invalid]="f(pwdForm,'new_password')?.invalid && f(pwdForm,'new_password')?.touched">
-            <p class="form-error" *ngIf="f(pwdForm,'new_password')?.errors?.['minlength'] && f(pwdForm,'new_password')?.touched">Min. 8 caractères</p>
+            <p class="form-error" *ngIf="f(pwdForm,'new_password')?.errors?.['minlength'] && f(pwdForm,'new_password')?.touched">Min. 8 characters</p>
           </div>
           <div class="form-group">
-            <label class="form-label">Confirmer le nouveau mot de passe</label>
+            <label class="form-label">Confirm new password</label>
             <input class="form-control" formControlName="new_password2" type="password"
               [class.is-invalid]="pwdForm.errors?.['mismatch'] && f(pwdForm,'new_password2')?.touched">
-            <p class="form-error" *ngIf="pwdForm.errors?.['mismatch'] && f(pwdForm,'new_password2')?.touched">Les mots de passe ne correspondent pas</p>
+            <p class="form-error" *ngIf="pwdForm.errors?.['mismatch'] && f(pwdForm,'new_password2')?.touched">Passwords do not match</p>
           </div>
           <div class="form-actions">
             <button type="submit" class="btn btn-primary" [disabled]="pwdLoading">
               <span *ngIf="pwdLoading" class="spinner-sm"></span>
-              Modifier le mot de passe
+              Change password
             </button>
           </div>
         </form>
