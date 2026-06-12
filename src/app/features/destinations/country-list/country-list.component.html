@@ -1,16 +1,16 @@
 <div class="page-header">
-  <div><h1>🏳️ Pays</h1><p>{{countries.length}} pays</p></div>
-  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Ajouter un pays</button>
+  <div><h1>🏳️ Countries</h1><p>{{countries.length}} country(ies)</p></div>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Add a country</button>
 </div>
 <div class="filters-bar">
-  <input class="form-control search-input" [(ngModel)]="search" placeholder="🔍 Rechercher..." (keyup.enter)="load()">
-  <button class="btn btn-outline btn-sm" (click)="load()">Rechercher</button>
+  <input class="form-control search-input" [(ngModel)]="search" placeholder="🔍 Search..." (keyup.enter)="load()">
+  <button class="btn btn-outline btn-sm" (click)="load()">Search</button>
 </div>
 <div class="loading-overlay" *ngIf="loading"><div class="spinner"></div></div>
 <div class="card" *ngIf="!loading && countries.length > 0">
   <div class="table-wrapper">
     <table class="data-table">
-      <thead><tr><th>Pays</th><th>Code ISO</th><th>Villes</th><th>Activités</th><th *ngIf="auth.isAdmin">Actions</th></tr></thead>
+      <thead><tr><th>Country</th><th>ISO Code</th><th>Cities</th><th>Activities</th><th *ngIf="auth.isAdmin">Actions</th></tr></thead>
       <tbody>
         <tr *ngFor="let c of countries">
           <td><strong>{{c.name}}</strong></td>
@@ -29,43 +29,41 @@
   </div>
 </div>
 <div class="empty-state" *ngIf="!loading && countries.length === 0">
-  <div class="empty-icon">🏳️</div><h3>Aucun pays</h3>
-  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Ajouter</button>
+  <div class="empty-icon">🏳️</div><h3>No countries</h3>
+  <button class="btn btn-primary" (click)="openCreate()" *ngIf="auth.isAdmin">+ Add</button>
 </div>
-
 <!-- Modal -->
 <div class="modal-backdrop" *ngIf="showModal" (click)="showModal = false">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>{{editingCountry ? 'Modifier le pays' : 'Nouveau pays'}}</h2>
+      <h2>{{editingCountry ? 'Edit country' : 'New country'}}</h2>
       <button class="btn btn-ghost btn-icon" (click)="showModal = false">✕</button>
     </div>
     <div class="modal-body">
       <form [formGroup]="form">
         <div class="form-group">
-          <label class="form-label">Nom *</label>
-          <input class="form-control" formControlName="name" placeholder="Cameroun" [class.is-invalid]="f('name')?.invalid && f('name')?.touched">
-          <p class="form-error" *ngIf="f('name')?.invalid && f('name')?.touched">Requis</p>
+          <label class="form-label">Name *</label>
+          <input class="form-control" formControlName="name" placeholder="Cameroon" [class.is-invalid]="f('name')?.invalid && f('name')?.touched">
+          <p class="form-error" *ngIf="f('name')?.invalid && f('name')?.touched">Required</p>
         </div>
         <div class="form-group">
-          <label class="form-label">Code ISO *</label>
+          <label class="form-label">ISO Code *</label>
           <input class="form-control" formControlName="iso_code" placeholder="CM" maxlength="3"
             style="text-transform:uppercase" [class.is-invalid]="f('iso_code')?.invalid && f('iso_code')?.touched">
-          <p class="form-error" *ngIf="f('iso_code')?.invalid && f('iso_code')?.touched">Requis (max 3 car.)</p>
+          <p class="form-error" *ngIf="f('iso_code')?.invalid && f('iso_code')?.touched">Required (max 3 chars)</p>
         </div>
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline" (click)="showModal = false">Annuler</button>
+      <button class="btn btn-outline" (click)="showModal = false">Cancel</button>
       <button class="btn btn-primary" (click)="save()" [disabled]="saving">
         <span *ngIf="saving" class="spinner-sm"></span>
-        {{editingCountry ? 'Enregistrer' : 'Créer'}}
+        {{editingCountry ? 'Save' : 'Create'}}
       </button>
     </div>
   </div>
 </div>
-
-<app-confirm-modal *ngIf="showDeleteModal" title="Supprimer le pays"
-  message="Supprimer ce pays supprimera également toutes ses villes associées."
-  confirmLabel="Supprimer" [danger]="true" [loading]="deleteLoading"
+<app-confirm-modal *ngIf="showDeleteModal" title="Delete country"
+  message="Deleting this country will also delete all of its associated cities."
+  confirmLabel="Delete" [danger]="true" [loading]="deleteLoading"
   (confirmed)="doDelete()" (cancelled)="showDeleteModal = false" />
