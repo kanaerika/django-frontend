@@ -3,52 +3,46 @@
     <div class="auth-hero">
       <div class="hero-graphic">🌍</div>
       <h1>TourismPro</h1>
-      <p>Gérez vos activités touristiques, réservations et destinations depuis une seule plateforme moderne.</p>
+      <p>Manage your tourism activities, bookings, and destinations from a single modern platform.</p>
       <div class="hero-features">
-        <div class="hero-feature"><span>🏄</span> Activités & Plannings</div>
-        <div class="hero-feature"><span>🎫</span> Réservations en temps réel</div>
-        <div class="hero-feature"><span>🏨</span> Gestion hôtelière</div>
-        <div class="hero-feature"><span>⭐</span> Avis & modération</div>
+        <div class="hero-feature"><span>🏄</span> Activities & Schedules</div>
+        <div class="hero-feature"><span>🎫</span> Real-time bookings</div>
+        <div class="hero-feature"><span>🏨</span> Hotel management</div>
+        <div class="hero-feature"><span>⭐</span> Reviews & moderation</div>
       </div>
     </div>
   </div>
-
   <div class="auth-right">
     <div class="auth-card">
       <div class="auth-logo">🌍</div>
-      <h2>Connexion</h2>
-      <p class="auth-subtitle">Bienvenue ! Entrez vos identifiants pour continuer.</p>
-
+      <h2>Sign in</h2>
+      <p class="auth-subtitle">Welcome! Enter your credentials to continue.</p>
       <div class="alert alert-error" *ngIf="error">
         <span>⚠️</span> {{error}}
       </div>
-
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="form-group">
-          <label class="form-label">Nom d'utilisateur</label>
-          <input class="form-control" formControlName="username" placeholder="ex: john_doe"
+          <label class="form-label">Username</label>
+          <input class="form-control" formControlName="username" placeholder="e.g.: john_doe"
             [class.is-invalid]="f('username')?.invalid && f('username')?.touched" autocomplete="username">
-          <p class="form-error" *ngIf="f('username')?.invalid && f('username')?.touched">Champ requis</p>
+          <p class="form-error" *ngIf="f('username')?.invalid && f('username')?.touched">Required field</p>
         </div>
-
         <div class="form-group">
-          <label class="form-label">Mot de passe</label>
+          <label class="form-label">Password</label>
           <div class="input-group">
             <input class="form-control" formControlName="password" [type]="showPwd ? 'text' : 'password'"
-              placeholder="Votre mot de passe" [class.is-invalid]="f('password')?.invalid && f('password')?.touched"
+              placeholder="Your password" [class.is-invalid]="f('password')?.invalid && f('password')?.touched"
               autocomplete="current-password">
             <button type="button" class="input-addon" (click)="showPwd = !showPwd">{{showPwd ? '🙈' : '👁️'}}</button>
           </div>
-          <p class="form-error" *ngIf="f('password')?.invalid && f('password')?.touched">Champ requis</p>
+          <p class="form-error" *ngIf="f('password')?.invalid && f('password')?.touched">Required field</p>
         </div>
-
         <button type="submit" class="btn btn-primary w-full btn-lg" [disabled]="loading">
           <span *ngIf="loading" class="spinner-sm"></span>
-          {{ loading ? 'Connexion...' : 'Se connecter' }}
+          {{ loading ? 'Signing in...' : 'Sign in' }}
         </button>
       </form>
-
-      <p class="auth-link">Pas encore de compte ? <a routerLink="/auth/register">S'inscrire</a></p>
+      <p class="auth-link">Don't have an account yet? <a routerLink="/auth/register">Sign up</a></p>
     </div>
   </div>
 </div>

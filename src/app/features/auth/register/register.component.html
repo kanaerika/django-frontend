@@ -2,77 +2,67 @@
   <div class="auth-left">
     <div class="auth-hero">
       <div class="hero-graphic">🌍</div>
-      <h1>Rejoignez TourismPro</h1>
-      <p>Créez votre compte et commencez à gérer vos activités et réservations dès aujourd'hui.</p>
+      <h1>Join TourismPro</h1>
+      <p>Create your account and start managing your activities and bookings today.</p>
     </div>
   </div>
-
   <div class="auth-right">
     <div class="auth-card">
       <div class="auth-logo">🌍</div>
-      <h2>Créer un compte</h2>
-      <p class="auth-subtitle">Remplissez le formulaire pour vous inscrire.</p>
-
+      <h2>Create an account</h2>
+      <p class="auth-subtitle">Fill in the form to sign up.</p>
       <div class="alert alert-error" *ngIf="error">
         <span>⚠️</span> {{error}}
       </div>
-
       <form [formGroup]="form" (ngSubmit)="submit()">
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Prénom</label>
-            <input class="form-control" formControlName="first_name" placeholder="Jean">
+            <label class="form-label">First name</label>
+            <input class="form-control" formControlName="first_name" placeholder="John">
           </div>
           <div class="form-group">
-            <label class="form-label">Nom</label>
-            <input class="form-control" formControlName="last_name" placeholder="Dupont">
+            <label class="form-label">Last name</label>
+            <input class="form-control" formControlName="last_name" placeholder="Doe">
           </div>
         </div>
-
         <div class="form-group">
-          <label class="form-label">Nom d'utilisateur *</label>
-          <input class="form-control" formControlName="username" placeholder="jean_dupont"
+          <label class="form-label">Username *</label>
+          <input class="form-control" formControlName="username" placeholder="john_doe"
             [class.is-invalid]="f('username')?.invalid && f('username')?.touched">
-          <p class="form-error" *ngIf="f('username')?.errors?.['required'] && f('username')?.touched">Champ requis</p>
-          <p class="form-error" *ngIf="f('username')?.errors?.['minlength'] && f('username')?.touched">Minimum 3 caractères</p>
+          <p class="form-error" *ngIf="f('username')?.errors?.['required'] && f('username')?.touched">Required field</p>
+          <p class="form-error" *ngIf="f('username')?.errors?.['minlength'] && f('username')?.touched">Minimum 3 characters</p>
         </div>
-
         <div class="form-group">
           <label class="form-label">Email *</label>
-          <input class="form-control" formControlName="email" type="email" placeholder="jean@exemple.com"
+          <input class="form-control" formControlName="email" type="email" placeholder="john@example.com"
             [class.is-invalid]="f('email')?.invalid && f('email')?.touched">
-          <p class="form-error" *ngIf="f('email')?.invalid && f('email')?.touched">Email invalide</p>
+          <p class="form-error" *ngIf="f('email')?.invalid && f('email')?.touched">Invalid email</p>
         </div>
-
         <div class="form-group">
-          <label class="form-label">Rôle</label>
+          <label class="form-label">Role</label>
           <select class="form-control" formControlName="role_id">
-            <option [value]="null">Sélectionner un rôle (optionnel)</option>
+            <option [value]="null">Select a role (optional)</option>
             <option *ngFor="let r of roles" [value]="r.id">{{r.name}}</option>
           </select>
         </div>
-
         <div class="form-group">
-          <label class="form-label">Mot de passe *</label>
-          <input class="form-control" formControlName="password" type="password" placeholder="Min. 8 caractères"
+          <label class="form-label">Password *</label>
+          <input class="form-control" formControlName="password" type="password" placeholder="Min. 8 characters"
             [class.is-invalid]="f('password')?.invalid && f('password')?.touched">
-          <p class="form-error" *ngIf="f('password')?.errors?.['minlength'] && f('password')?.touched">Minimum 8 caractères</p>
+          <p class="form-error" *ngIf="f('password')?.errors?.['minlength'] && f('password')?.touched">Minimum 8 characters</p>
         </div>
-
         <div class="form-group">
-          <label class="form-label">Confirmer le mot de passe *</label>
-          <input class="form-control" formControlName="password2" type="password" placeholder="Répétez le mot de passe"
+          <label class="form-label">Confirm password *</label>
+          <input class="form-control" formControlName="password2" type="password" placeholder="Repeat the password"
             [class.is-invalid]="form.errors?.['mismatch'] && f('password2')?.touched">
-          <p class="form-error" *ngIf="form.errors?.['mismatch'] && f('password2')?.touched">Les mots de passe ne correspondent pas</p>
+          <p class="form-error" *ngIf="form.errors?.['mismatch'] && f('password2')?.touched">Passwords do not match</p>
         </div>
-
         <button type="submit" class="btn btn-primary w-full btn-lg" [disabled]="loading">
           <span *ngIf="loading" class="spinner-sm"></span>
-          {{ loading ? 'Création...' : 'Créer mon compte' }}
+          {{ loading ? 'Creating...' : 'Create my account' }}
         </button>
       </form>
-
-      <p class="auth-link">Déjà inscrit ? <a routerLink="/auth/login">Se connecter</a></p>
+      <p class="auth-link">Already registered? <a routerLink="/auth/login">Sign in</a></p>
     </div>
   </div>
 </div>
