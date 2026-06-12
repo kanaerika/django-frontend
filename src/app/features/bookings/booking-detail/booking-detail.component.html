@@ -2,14 +2,14 @@
 
 <ng-container *ngIf="booking && !loading">
   <div class="breadcrumbs">
-    <a routerLink="/bookings">Réservations</a>
+    <a routerLink="/bookings">Bookings</a>
     <span class="sep">/</span>
     <span>{{booking.booking_reference}}</span>
   </div>
 
   <div class="page-header">
     <div>
-      <h1>🎫 Réservation</h1>
+      <h1>🎫 Booking</h1>
       <p><code class="ref">{{booking.booking_reference}}</code></p>
     </div>
     <span class="badge badge-lg" [ngClass]="getStatusClass(booking.status)">{{booking.status_display}}</span>
@@ -20,28 +20,28 @@
     <div class="detail-main">
       <!-- Summary card -->
       <div class="card">
-        <div class="card-header"><h3>📋 Résumé</h3></div>
+        <div class="card-header"><h3>📋 Summary</h3></div>
         <div class="card-body">
           <div class="info-grid">
-            <div class="info-item"><span class="info-label">Activité</span>
+            <div class="info-item"><span class="info-label">Activity</span>
               <a [routerLink]="['/activities', booking.activity_slug]" class="info-value link">{{booking.activity_title}}</a>
             </div>
-            <div class="info-item"><span class="info-label">Ville</span><span class="info-value">{{booking.city_name}}</span></div>
+            <div class="info-item"><span class="info-label">City</span><span class="info-value">{{booking.city_name}}</span></div>
             <div class="info-item"><span class="info-label">Date</span><span class="info-value">{{booking.schedule_date | date:'dd MMMM yyyy'}}</span></div>
-            <div class="info-item"><span class="info-label">Heure</span><span class="info-value">{{booking.schedule_start_time}}</span></div>
-            <div class="info-item"><span class="info-label">Voyageurs</span><span class="info-value">{{booking.number_of_travelers}} personne(s)</span></div>
+            <div class="info-item"><span class="info-label">Time</span><span class="info-value">{{booking.schedule_start_time}}</span></div>
+            <div class="info-item"><span class="info-label">Travelers</span><span class="info-value">{{booking.number_of_travelers}} person(s)</span></div>
             <div class="info-item"><span class="info-label">Total</span>
               <span class="info-value price">{{booking.total_price | currency:'XAF':'symbol':'1.0-0'}}</span>
             </div>
             <div class="info-item" *ngIf="booking.user_full_name && auth.isAdmin">
-              <span class="info-label">Réservé par</span>
+              <span class="info-label">Booked by</span>
               <span class="info-value">{{booking.user_full_name}} ({{booking.user_username}})</span>
             </div>
             <div class="info-item" *ngIf="booking.special_requests">
-              <span class="info-label">Demandes spéciales</span>
+              <span class="info-label">Special requests</span>
               <span class="info-value">{{booking.special_requests}}</span>
             </div>
-            <div class="info-item"><span class="info-label">Créée le</span>
+            <div class="info-item"><span class="info-label">Created on</span>
               <span class="info-value">{{booking.created_at | date:'dd/MM/yyyy HH:mm'}}</span>
             </div>
           </div>
@@ -50,18 +50,18 @@
 
       <!-- Payment info -->
       <div class="card mt-16" *ngIf="booking.payment">
-        <div class="card-header"><h3>💳 Paiement</h3></div>
+        <div class="card-header"><h3>💳 Payment</h3></div>
         <div class="card-body">
           <div class="info-grid">
-            <div class="info-item"><span class="info-label">Méthode</span>
+            <div class="info-item"><span class="info-label">Method</span>
               <span class="info-value">{{booking.payment.method | uppercase}}</span>
             </div>
-            <div class="info-item"><span class="info-label">Montant payé</span>
+            <div class="info-item"><span class="info-label">Amount paid</span>
               <span class="info-value price">{{booking.payment.amount_paid | currency:'XAF':'symbol':'1.0-0'}}</span>
             </div>
-            <div class="info-item"><span class="info-label">Statut</span>
+            <div class="info-item"><span class="info-label">Status</span>
               <span class="badge" [ngClass]="booking.payment.is_successful ? 'badge-success' : 'badge-error'">
-                {{booking.payment.is_successful ? 'Réussi' : 'Échoué'}}
+                {{booking.payment.is_successful ? 'Successful' : 'Failed'}}
               </span>
             </div>
             <div class="info-item"><span class="info-label">Date</span>
@@ -76,23 +76,23 @@
     <div class="detail-sidebar">
       <!-- Pay -->
       <div class="card" *ngIf="booking.status === 'pending' && !booking.payment && !paymentSuccess">
-        <div class="card-header"><h3>💳 Payer maintenant</h3></div>
+        <div class="card-header"><h3>💳 Pay now</h3></div>
         <div class="card-body">
           <div class="form-group">
-            <label class="form-label">Méthode de paiement</label>
+            <label class="form-label">Payment method</label>
             <select class="form-control" [(ngModel)]="paymentMethod">
-              <option value="wire">Virement bancaire</option>
+              <option value="wire">Bank transfer</option>
               <option value="paypal">PayPal</option>
-              <option value="stripe">Carte (Stripe)</option>
+              <option value="stripe">Card (Stripe)</option>
             </select>
           </div>
           <div class="pay-total">
-            <span>À payer</span>
+            <span>Amount due</span>
             <strong>{{booking.total_price | currency:'XAF':'symbol':'1.0-0'}}</strong>
           </div>
           <button class="btn btn-primary w-full mt-12" (click)="pay()" [disabled]="payLoading">
             <span *ngIf="payLoading" class="spinner-sm"></span>
-            Confirmer le paiement
+            Confirm payment
           </button>
         </div>
       </div>
@@ -100,8 +100,8 @@
       <div class="card payment-success" *ngIf="paymentSuccess">
         <div class="card-body text-center">
           <div class="success-icon">✅</div>
-          <h3>Paiement enregistré !</h3>
-          <p>Votre réservation est confirmée.</p>
+          <h3>Payment recorded!</h3>
+          <p>Your booking is confirmed.</p>
         </div>
       </div>
 
@@ -109,25 +109,25 @@
       <div class="card mt-16" *ngIf="booking.status === 'pending' || booking.status === 'confirmed'">
         <div class="card-body">
           <button class="btn btn-danger w-full" (click)="showCancelModal = true">
-            ✕ Annuler la réservation
+            ✕ Cancel booking
           </button>
         </div>
       </div>
 
       <!-- Admin: change status -->
       <div class="card mt-16" *ngIf="auth.isAdmin">
-        <div class="card-header"><h3>⚙️ Modifier le statut</h3></div>
+        <div class="card-header"><h3>⚙️ Update status</h3></div>
         <div class="card-body">
           <div class="form-group">
             <select class="form-control" [(ngModel)]="newStatus">
-              <option value="pending">En attente</option>
-              <option value="confirmed">Confirmée</option>
-              <option value="completed">Complétée</option>
-              <option value="cancelled">Annulée</option>
-              <option value="refunded">Remboursée</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="refunded">Refunded</option>
             </select>
           </div>
-          <button class="btn btn-outline w-full" (click)="updateStatus()">Mettre à jour</button>
+          <button class="btn btn-outline w-full" (click)="updateStatus()">Update</button>
         </div>
       </div>
     </div>
@@ -135,9 +135,9 @@
 </ng-container>
 
 <app-confirm-modal *ngIf="showCancelModal"
-  title="Annuler la réservation"
-  message="Êtes-vous sûr de vouloir annuler cette réservation ? Cette action peut être irréversible."
-  confirmLabel="Oui, annuler"
+  title="Cancel booking"
+  message="Are you sure you want to cancel this booking? This action may be irreversible."
+  confirmLabel="Yes, cancel"
   [danger]="true"
   [loading]="cancelLoading"
   (confirmed)="cancel()"
